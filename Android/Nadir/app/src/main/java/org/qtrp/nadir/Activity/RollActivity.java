@@ -1,24 +1,27 @@
-package org.qtrp.nadir;
+package org.qtrp.nadir.Activity;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
-import org.qtrp.nadir.SettingsFragment;
 
-public class SettingsActivity extends PreferenceActivity {
+import org.qtrp.nadir.R;
+
+public class RollActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_roll_acticity);
 
-        getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new SettingsFragment())
-                .commit();
+        Intent intent = getIntent();
+        Integer roll_id = intent.getIntExtra("roll_id", -1);
+
+        Log.i("Roll id: ", roll_id.toString());
     }
 
 }

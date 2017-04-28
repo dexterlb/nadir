@@ -1,4 +1,4 @@
-package org.qtrp.nadir;
+package org.qtrp.nadir.Activity;
 
 import android.content.Context;
 import android.net.Uri;
@@ -8,6 +8,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import org.qtrp.nadir.R;
 
 public class SettingsFragment extends PreferenceFragment {
     public SettingsFragment() {

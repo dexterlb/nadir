@@ -1,26 +1,30 @@
-package org.qtrp.nadir;
+package org.qtrp.nadir.Activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import org.qtrp.nadir.CustomListView.RollAdapter;
+import org.qtrp.nadir.Database.FilmRollDbHelper;
+import org.qtrp.nadir.Database.Roll;
+import org.qtrp.nadir.R;
+
 import java.util.ArrayList;
 
-public class ManageRolls extends AppCompatActivity {
+public class ManageRollsActivity extends AppCompatActivity {
     SharedPreferences prefereces;
     FloatingActionButton settingsButton;
+    FloatingActionButton addButton;
     ListView rollsList;
+    FilmRollDbHelper filmRollDbHelper;
+    ArrayAdapter<Roll> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,39 +38,46 @@ public class ManageRolls extends AppCompatActivity {
     }
 
     private void dummyData() {
-        ArrayList<String> listItems = new ArrayList<>();
-        listItems.add("Roll 1");
-        listItems.add("Roll 2");
-        listItems.add("Roll 3");
+        ArrayList<Roll> listItems = filmRollDbHelper.getRolls();
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listItems);
+        adapter = new RollAdapter(this, listItems);
         rollsList.setAdapter(adapter);
-
     }
 
     private void bindWidgets() {
-        settingsButton = (FloatingActionButton) findViewById(R.id.settingsButton);
+        //settingsButton = (FloatingActionButton) findViewById(R.id.settingsButton);
+        addButton = (FloatingActionButton) findViewById(R.id.addButton);
         rollsList = (ListView) findViewById(R.id.rollsList);
     }
 
     private void loadUtils() {
         prefereces = PreferenceManager.getDefaultSharedPreferences(this);
-
+        filmRollDbHelper = new FilmRollDbHelper(this);
     }
 
     private void setListeners(){
-        settingsButton.setOnClickListener(new View.OnClickListener(){
+//        settingsButton.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(ManageRollsActivity.this, SettingsActivity.class);
+//                startActivity(intent);
+//            }
+//        });
+
+        addButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ManageRolls.this, SettingsActivity.class);
-                startActivity(intent);
+                Roll roll = new Roll(null, "Vitosha", "colour", 24234234);
+                filmRollDbHelper.insertRoll(roll);
+                adapter.add(roll);
+                adapter.notifyDataSetChanged();
             }
         });
 
         rollsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Intent intent = new Intent(ManageRolls.this, RollActicity.class);
+                Intent intent = new Intent(ManageRollsActivity.this, RollActivity.class);
                 intent.putExtra("roll_id", position);
                 startActivity(intent);
             }

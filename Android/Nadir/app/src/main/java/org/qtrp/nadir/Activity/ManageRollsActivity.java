@@ -53,6 +53,12 @@ public class ManageRollsActivity extends AppCompatActivity  implements AddRollDi
         rollsList.setAdapter(adapter);
     }
 
+    private void refreshDatasets() {
+        adapter.clear();
+        adapter.addAll(filmRollDbHelper.getRolls());
+        adapter.notifyDataSetChanged();
+    }
+
     private void bindWidgets() {
         //settingsButton = (FloatingActionButton) findViewById(R.id.settingsButton);
         addButton = (FloatingActionButton) findViewById(R.id.addButton);
@@ -127,8 +133,7 @@ public class ManageRollsActivity extends AppCompatActivity  implements AddRollDi
 
                 Roll roll = adapter.getItem(info.position);
                 filmRollDbHelper.removeRoll(roll.getId());
-                adapter.remove(roll);
-                adapter.notifyDataSetChanged();
+                refreshDatasets();
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -137,7 +142,6 @@ public class ManageRollsActivity extends AppCompatActivity  implements AddRollDi
 
     @Override
     public void onDialogPositiveClick(DialogFragment dialog) {
-        adapter.clear();
-        adapter.addAll(filmRollDbHelper.getRolls());
+        refreshDatasets();
     }
 }

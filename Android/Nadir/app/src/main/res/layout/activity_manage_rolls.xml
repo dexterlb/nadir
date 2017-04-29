@@ -20,14 +20,9 @@
 
     </android.support.design.widget.AppBarLayout>
 
-
-    <!--<android.support.design.widget.FloatingActionButton-->
-        <!--android:id="@+id/settingsButton"-->
-        <!--android:layout_width="113dp"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="bottom|end"-->
-        <!--android:layout_margin="@dimen/fab_margin"-->
-        <!--app:srcCompat="@android:drawable/ic_menu_preferences" />-->
+    <include
+        android:id="@+id/lay"
+        layout="@layout/content_manage_rolls" />
 
     <ListView
         android:id="@+id/rollsList"
@@ -41,5 +36,14 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@android:drawable/ic_menu_add" />
+
+
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/settingsButton"-->
+        <!--android:layout_width="113dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="bottom|end"-->
+        <!--android:layout_margin="@dimen/fab_margin"-->
+        <!--app:srcCompat="@android:drawable/ic_menu_preferences" />-->
 
 </android.support.design.widget.CoordinatorLayout>

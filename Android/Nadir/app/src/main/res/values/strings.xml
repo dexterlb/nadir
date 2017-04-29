@@ -81,4 +81,5 @@
     <string name="add_roll_message">Add film roll</string>
     <string name="add_roll">Add</string>
     <string name="cancel">cancel</string>
+    <string name="delete">Delete</string>
 </resources>

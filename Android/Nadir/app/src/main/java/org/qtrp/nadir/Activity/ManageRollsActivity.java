@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -39,6 +42,8 @@ public class ManageRollsActivity extends AppCompatActivity  implements AddRollDi
         loadUtils();
         setListeners();
         setDatasets();
+
+        registerForContextMenu(rollsList);
     }
 
     private void setDatasets() {
@@ -86,23 +91,48 @@ public class ManageRollsActivity extends AppCompatActivity  implements AddRollDi
             }
         });
 
-        rollsList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//        rollsList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//
+//            @Override
+//            public boolean onItemLongClick(AdapterView<?> parent, View view,
+//                                           int position, long arg3) {
+//
+//                Roll item = adapter.getItem(position);
+//                filmRollDbHelper.removeRoll(item.getId());
+//                adapter.remove(item);
+//                adapter.notifyDataSetChanged();
+//
+//                Toast.makeText(ManageRollsActivity.this, "Removed " + item.getName(), Toast.LENGTH_LONG).show();
+//
+//                return false;
+//            }
+//
+//        });
+    }
 
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view,
-                                           int position, long arg3) {
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.item_menu, menu);
+    }
 
-                Roll item = adapter.getItem(position);
-                filmRollDbHelper.removeRoll(item.getId());
-                adapter.remove(item);
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        switch(item.getItemId()) {
+            case R.id.delete_roll:
+                Toast.makeText(this, "Click delete",
+                        Toast.LENGTH_SHORT).show();
+
+                Roll roll = adapter.getItem(info.position);
+                filmRollDbHelper.removeRoll(roll.getId());
+                adapter.remove(roll);
                 adapter.notifyDataSetChanged();
-
-                Toast.makeText(ManageRollsActivity.this, "Removed " + item.getName(), Toast.LENGTH_LONG).show();
-
-                return false;
-            }
-
-        });
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
     }
 
     @Override

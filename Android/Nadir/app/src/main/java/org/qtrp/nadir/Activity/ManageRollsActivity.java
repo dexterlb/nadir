@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import org.qtrp.nadir.CustomViews.AddRollDialogFragment;
+import org.qtrp.nadir.CustomViews.ContextMenuRecyclerView;
 import org.qtrp.nadir.CustomViews.RollAdapter;
 import org.qtrp.nadir.Database.FilmRollDbHelper;
 import org.qtrp.nadir.Database.Roll;
@@ -32,7 +33,7 @@ public class ManageRollsActivity extends AppCompatActivity  implements AddRollDi
     SharedPreferences prefereces;
     FloatingActionButton settingsButton;
     FloatingActionButton addButton;
-    RecyclerView rollsList;
+    ContextMenuRecyclerView rollsList;
     FilmRollDbHelper filmRollDbHelper;
     RollAdapter adapter;
     DialogFragment addRollDialog;
@@ -70,7 +71,7 @@ public class ManageRollsActivity extends AppCompatActivity  implements AddRollDi
     private void bindWidgets() {
         //settingsButton = (FloatingActionButton) findViewById(R.id.settingsButton);
         addButton = (FloatingActionButton) findViewById(R.id.addButton);
-        rollsList = (RecyclerView) findViewById(R.id.rollsList);
+        rollsList = (ContextMenuRecyclerView) findViewById(R.id.rollsList);
     }
 
     private void loadUtils() {
@@ -137,11 +138,13 @@ public class ManageRollsActivity extends AppCompatActivity  implements AddRollDi
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuInflater menuInflater = this.getMenuInflater();
         menuInflater.inflate(R.menu.item_menu, menu);
+        int itemIndex = ((ContextMenuRecyclerView.RecyclerViewContextMenuInfo) menuInfo).position;
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        Toast.makeText(this, " User selected something " + item.toString(), Toast.LENGTH_LONG).show();
+        ContextMenuRecyclerView.RecyclerViewContextMenuInfo info = (ContextMenuRecyclerView.RecyclerViewContextMenuInfo) item.getMenuInfo();
+        Toast.makeText(this, " User selected something " + item.toString() + " for " + info.position, Toast.LENGTH_LONG).show();
 
         return false;
     }

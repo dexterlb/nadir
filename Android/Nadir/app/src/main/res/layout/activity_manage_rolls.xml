@@ -24,7 +24,7 @@
         android:id="@+id/lay"
         layout="@layout/content_manage_rolls" />
 
-    <android.support.v7.widget.RecyclerView
+    <org.qtrp.nadir.CustomViews.ContextMenuRecyclerView
         android:id="@+id/rollsList"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

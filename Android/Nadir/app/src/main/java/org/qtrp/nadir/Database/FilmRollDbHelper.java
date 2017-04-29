@@ -39,6 +39,12 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
         return db.insert(FilmRollContract.Roll.TABLE_NAME, null, values);
     }
 
+    public void removeRoll(Long id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.delete(FilmRollContract.Roll.TABLE_NAME, FilmRollContract.Roll._ID + " + " + id, null);
+    }
+
     public ArrayList<Roll> getRolls(){
         ArrayList<Roll> rolls = new ArrayList<Roll>();
         SQLiteDatabase db = this.getReadableDatabase();

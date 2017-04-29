@@ -6,14 +6,8 @@ import android.database.Cursor;
 import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.widget.ArrayAdapter;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
-
-/**
- * Created by do on 28/04/17.
- */
 
 public class FilmRollDbHelper extends SQLiteOpenHelper{
     public static final int DATABASE_VERSION = 1;
@@ -63,7 +57,7 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
                     cursor.getLong(cursor.getColumnIndex(FilmRollContract.Roll._ID)),
                     cursor.getString(cursor.getColumnIndex(FilmRollContract.Roll.COLUMN_NAME_NAME)),
                     cursor.getString(cursor.getColumnIndex(FilmRollContract.Roll.COLUMN_NAME_COLOUR)),
-                    cursor.getInt(cursor.getColumnIndex(FilmRollContract.Roll.COLUMN_NAME_TIMESTAMP))
+                    cursor.getLong(cursor.getColumnIndex(FilmRollContract.Roll.COLUMN_NAME_TIMESTAMP))
             );
 
             rolls.add(roll);

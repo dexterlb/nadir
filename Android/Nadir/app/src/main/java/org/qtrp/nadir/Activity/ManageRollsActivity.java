@@ -1,5 +1,6 @@
 package org.qtrp.nadir.Activity;
 
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,21 +11,24 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
-import org.qtrp.nadir.CustomListView.RollAdapter;
+import org.qtrp.nadir.CustomViews.AddRollDialogFragment;
+import org.qtrp.nadir.CustomViews.RollAdapter;
 import org.qtrp.nadir.Database.FilmRollDbHelper;
 import org.qtrp.nadir.Database.Roll;
 import org.qtrp.nadir.R;
 
 import java.util.ArrayList;
 
-public class ManageRollsActivity extends AppCompatActivity {
+public class ManageRollsActivity extends AppCompatActivity  implements AddRollDialogFragment.NoticeDialogListener {
     SharedPreferences prefereces;
     FloatingActionButton settingsButton;
     FloatingActionButton addButton;
     ListView rollsList;
     FilmRollDbHelper filmRollDbHelper;
     ArrayAdapter<Roll> adapter;
+    DialogFragment addRollDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,10 +38,10 @@ public class ManageRollsActivity extends AppCompatActivity {
         bindWidgets();
         loadUtils();
         setListeners();
-        dummyData();
+        setDatasets();
     }
 
-    private void dummyData() {
+    private void setDatasets() {
         ArrayList<Roll> listItems = filmRollDbHelper.getRolls();
 
         adapter = new RollAdapter(this, listItems);
@@ -53,6 +57,8 @@ public class ManageRollsActivity extends AppCompatActivity {
     private void loadUtils() {
         prefereces = PreferenceManager.getDefaultSharedPreferences(this);
         filmRollDbHelper = new FilmRollDbHelper(this);
+        addRollDialog = new AddRollDialogFragment();
+
     }
 
     private void setListeners(){
@@ -67,10 +73,7 @@ public class ManageRollsActivity extends AppCompatActivity {
         addButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                Roll roll = new Roll(null, "Vitosha", "colour", 24234234);
-                filmRollDbHelper.insertRoll(roll);
-                adapter.add(roll);
-                adapter.notifyDataSetChanged();
+                addRollDialog.show(getFragmentManager(), "Add roll");
             }
         });
 
@@ -84,4 +87,9 @@ public class ManageRollsActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        adapter.clear();
+        adapter.addAll(filmRollDbHelper.getRolls());
+    }
 }

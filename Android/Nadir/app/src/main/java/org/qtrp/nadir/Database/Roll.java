@@ -8,11 +8,11 @@ public class Roll {
     Long id;
     String name;
     String colour;
-    Integer timestamp;
+    Long timestamp;
 
     public Roll(){}
 
-    public Roll(Long id, String name, String colour, Integer timestamp) {
+    public Roll(Long id, String name, String colour, Long timestamp) {
         this.id = id;
         this.name = name;
         this.colour = colour;
@@ -53,11 +53,11 @@ public class Roll {
         this.colour = colour;
     }
 
-    public Integer getTimestamp() {
+    public Long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Integer timestamp) {
+    public void setTimestamp(Long timestamp) {
         this.timestamp = timestamp;
     }
 }

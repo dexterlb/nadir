@@ -1,11 +1,10 @@
-package org.qtrp.nadir.CustomListView;
+package org.qtrp.nadir.CustomViews;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import org.qtrp.nadir.Database.Roll;
@@ -30,7 +29,14 @@ public class RollAdapter extends ArrayAdapter<Roll> {
         TextView tvColour = (TextView) convertView.findViewById(R.id.tv_colour);
         // Populate the data into the template view using the data object
         tvName.setText(roll.getName());
-        tvColour.setText(roll.getColour());
+        String c = roll.getColour();
+        String colour = "Black'n'white";
+        if (c.equals("y")) {
+            colour = "Colour";
+        }
+
+
+        tvColour.setText(colour);
         // Return the completed view to render on screen
         return convertView;
     }

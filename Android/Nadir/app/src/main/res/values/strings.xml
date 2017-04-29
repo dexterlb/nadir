@@ -78,4 +78,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_roll_acticity">RollActicity</string>
+    <string name="add_roll_message">Add film roll</string>
+    <string name="add_roll">Add</string>
+    <string name="cancel">cancel</string>
 </resources>

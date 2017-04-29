@@ -42,7 +42,7 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
     public void removeRoll(Long id) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        db.delete(FilmRollContract.Roll.TABLE_NAME, FilmRollContract.Roll._ID + " + " + id, null);
+        db.delete(FilmRollContract.Roll.TABLE_NAME, FilmRollContract.Roll._ID + " = " + id, null);
     }
 
     public ArrayList<Roll> getRolls(){

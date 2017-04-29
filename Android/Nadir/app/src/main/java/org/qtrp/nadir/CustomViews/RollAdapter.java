@@ -1,5 +1,6 @@
 package org.qtrp.nadir.CustomViews;
 
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -11,17 +12,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.qtrp.nadir.Activity.ManageRollsActivity;
+import org.qtrp.nadir.Activity.RollActivity;
 import org.qtrp.nadir.Database.Roll;
 import org.qtrp.nadir.R;
 
+import java.util.Collection;
 import java.util.List;
 
 public class RollAdapter extends RecyclerView.Adapter<RollAdapter.MyViewHolder> {
 
     private List<Roll> rollList;
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView name, colour;
+        public int rollId;
 
         public MyViewHolder(View view) {
             super(view);
@@ -29,6 +33,12 @@ public class RollAdapter extends RecyclerView.Adapter<RollAdapter.MyViewHolder> 
             colour = (TextView) view.findViewById(R.id.tv_colour);
         }
 
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(view.getContext(), RollActivity.class);
+            intent.putExtra("roll_id", rollId);
+            view.getContext().startActivity(intent);
+        }
     }
     public long getIdAt(int position) {
         return this.rollList.get(position).getId();
@@ -58,6 +68,7 @@ public class RollAdapter extends RecyclerView.Adapter<RollAdapter.MyViewHolder> 
         }
 
         holder.itemView.setLongClickable(true);
+        holder.itemView.setOnClickListener(holder);
     }
 
     @Override
@@ -67,5 +78,13 @@ public class RollAdapter extends RecyclerView.Adapter<RollAdapter.MyViewHolder> 
 
     public Roll getItem(int position) {
         return rollList.get(position);
+    }
+
+    public void clear() {
+        rollList.clear();
+    }
+
+    public void addAll(Collection<? extends Roll> rolls) {
+        rollList.addAll(rolls);
     }
 }

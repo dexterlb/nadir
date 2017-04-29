@@ -64,7 +64,8 @@ public class ManageRollsActivity extends AppCompatActivity  implements AddRollDi
     }
 
     private void refreshDatasets() {
-        Toast.makeText(this, "Notifieing", Toast.LENGTH_LONG).show();
+        adapter.clear();
+        adapter.addAll(filmRollDbHelper.getRolls());
         adapter.notifyDataSetChanged();
     }
 
@@ -96,36 +97,6 @@ public class ManageRollsActivity extends AppCompatActivity  implements AddRollDi
                 addRollDialog.show(getFragmentManager(), "Add roll");
             }
         });
-
-
-//        rollsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-//                Intent intent = new Intent(ManageRollsActivity.this, RollActivity.class);
-//                intent.putExtra("roll_id", position);
-//                startActivity(intent);
-//            }
-//        });
-
-//        rollsList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//
-//            @Override
-//            public boolean onItemLongClick(AdapterView<?> parent, View view,
-//                                           int position, long arg3) {
-//
-//                Roll item = adapter.getItem(position);
-//                filmRollDbHelper.removeRoll(item.getId());
-//                adapter.remove(item);
-//                adapter.notifyDataSetChanged();
-//
-//                Toast.makeText(ManageRollsActivity.this, "Removed " + item.getName(), Toast.LENGTH_LONG).show();
-//
-//                return false;
-//            }
-//
-//        });
-
-
     }
 
     @Override
@@ -143,9 +114,15 @@ public class ManageRollsActivity extends AppCompatActivity  implements AddRollDi
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         ContextMenuRecyclerView.RecyclerViewContextMenuInfo info = (ContextMenuRecyclerView.RecyclerViewContextMenuInfo) item.getMenuInfo();
-        Roll roll = adapter.getItem(info.position);
-        filmRollDbHelper.removeRoll(roll.getId());
-        refreshDatasets();
-        return false;
+
+        switch(item.getItemId()) {
+            case R.id.delete_roll:
+                Roll roll = adapter.getItem(info.position);
+                filmRollDbHelper.removeRoll(roll.getId());
+                refreshDatasets();
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
     }
 }

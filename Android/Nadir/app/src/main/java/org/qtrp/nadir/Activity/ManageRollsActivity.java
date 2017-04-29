@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,14 +26,15 @@ import org.qtrp.nadir.Database.Roll;
 import org.qtrp.nadir.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ManageRollsActivity extends AppCompatActivity  implements AddRollDialogFragment.NoticeDialogListener {
     SharedPreferences prefereces;
     FloatingActionButton settingsButton;
     FloatingActionButton addButton;
-    ListView rollsList;
+    RecyclerView rollsList;
     FilmRollDbHelper filmRollDbHelper;
-    ArrayAdapter<Roll> adapter;
+    RollAdapter adapter;
     DialogFragment addRollDialog;
 
     @Override
@@ -47,22 +51,26 @@ public class ManageRollsActivity extends AppCompatActivity  implements AddRollDi
     }
 
     private void setDatasets() {
-        ArrayList<Roll> listItems = filmRollDbHelper.getRolls();
+        rollsList.setHasFixedSize(true);
+        List<Roll> listItems = filmRollDbHelper.getRolls();
 
-        adapter = new RollAdapter(this, listItems);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        rollsList.setLayoutManager(mLayoutManager);
+        rollsList.setItemAnimator(new DefaultItemAnimator());
+
+        adapter = new RollAdapter(listItems);
         rollsList.setAdapter(adapter);
     }
 
     private void refreshDatasets() {
-        adapter.clear();
-        adapter.addAll(filmRollDbHelper.getRolls());
+        Toast.makeText(this, "Notifieing", Toast.LENGTH_LONG).show();
         adapter.notifyDataSetChanged();
     }
 
     private void bindWidgets() {
         //settingsButton = (FloatingActionButton) findViewById(R.id.settingsButton);
         addButton = (FloatingActionButton) findViewById(R.id.addButton);
-        rollsList = (ListView) findViewById(R.id.rollsList);
+        rollsList = (RecyclerView) findViewById(R.id.rollsList);
     }
 
     private void loadUtils() {
@@ -88,14 +96,15 @@ public class ManageRollsActivity extends AppCompatActivity  implements AddRollDi
             }
         });
 
-        rollsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Intent intent = new Intent(ManageRollsActivity.this, RollActivity.class);
-                intent.putExtra("roll_id", position);
-                startActivity(intent);
-            }
-        });
+
+//        rollsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+//                Intent intent = new Intent(ManageRollsActivity.this, RollActivity.class);
+//                intent.putExtra("roll_id", position);
+//                startActivity(intent);
+//            }
+//        });
 
 //        rollsList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 //
@@ -114,34 +123,26 @@ public class ManageRollsActivity extends AppCompatActivity  implements AddRollDi
 //            }
 //
 //        });
-    }
 
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.item_menu, menu);
-    }
 
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        switch(item.getItemId()) {
-            case R.id.delete_roll:
-                Toast.makeText(this, "Click delete",
-                        Toast.LENGTH_SHORT).show();
-
-                Roll roll = adapter.getItem(info.position);
-                filmRollDbHelper.removeRoll(roll.getId());
-                refreshDatasets();
-                return true;
-            default:
-                return super.onContextItemSelected(item);
-        }
     }
 
     @Override
     public void onDialogPositiveClick(DialogFragment dialog) {
         refreshDatasets();
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater menuInflater = this.getMenuInflater();
+        menuInflater.inflate(R.menu.item_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        Toast.makeText(this, " User selected something " + item.toString(), Toast.LENGTH_LONG).show();
+
+        return false;
     }
 }

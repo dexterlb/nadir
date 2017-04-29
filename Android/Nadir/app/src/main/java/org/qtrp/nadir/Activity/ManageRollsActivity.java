@@ -138,7 +138,6 @@ public class ManageRollsActivity extends AppCompatActivity  implements AddRollDi
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuInflater menuInflater = this.getMenuInflater();
         menuInflater.inflate(R.menu.item_menu, menu);
-        int itemIndex = ((ContextMenuRecyclerView.RecyclerViewContextMenuInfo) menuInfo).position;
     }
 
     @Override

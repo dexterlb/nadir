@@ -128,9 +128,6 @@ public class ManageRollsActivity extends AppCompatActivity  implements AddRollDi
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch(item.getItemId()) {
             case R.id.delete_roll:
-                Toast.makeText(this, "Click delete",
-                        Toast.LENGTH_SHORT).show();
-
                 Roll roll = adapter.getItem(info.position);
                 filmRollDbHelper.removeRoll(roll.getId());
                 refreshDatasets();

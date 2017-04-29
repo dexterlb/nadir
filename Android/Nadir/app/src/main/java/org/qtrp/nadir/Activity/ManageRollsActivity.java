@@ -143,8 +143,9 @@ public class ManageRollsActivity extends AppCompatActivity  implements AddRollDi
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         ContextMenuRecyclerView.RecyclerViewContextMenuInfo info = (ContextMenuRecyclerView.RecyclerViewContextMenuInfo) item.getMenuInfo();
-        Toast.makeText(this, " User selected something " + item.toString() + " for " + info.position, Toast.LENGTH_LONG).show();
-
+        Roll roll = adapter.getItem(info.position);
+        filmRollDbHelper.removeRoll(roll.getId());
+        refreshDatasets();
         return false;
     }
 }

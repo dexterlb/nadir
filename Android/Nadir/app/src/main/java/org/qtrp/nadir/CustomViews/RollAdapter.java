@@ -64,4 +64,8 @@ public class RollAdapter extends RecyclerView.Adapter<RollAdapter.MyViewHolder> 
     public int getItemCount() {
         return rollList.size();
     }
+
+    public Roll getItem(int position) {
+        return rollList.get(position);
+    }
 }

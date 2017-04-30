@@ -2,6 +2,7 @@ package org.qtrp.nadir.CustomViews;
 
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -36,6 +37,7 @@ public class RollAdapter extends RecyclerView.Adapter<RollAdapter.MyViewHolder> 
         @Override
         public void onClick(View view) {
             Intent intent = new Intent(view.getContext(), RollActivity.class);
+
             intent.putExtra("roll_id", rollId);
             view.getContext().startActivity(intent);
         }
@@ -59,7 +61,7 @@ public class RollAdapter extends RecyclerView.Adapter<RollAdapter.MyViewHolder> 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         Roll roll = rollList.get(position);
-        holder.name.setText(roll.getName());
+        holder.name.setText(roll.getId() + " "  + roll.getName());
         String c = roll.getColour();
         if (c.equals("y")) {
             holder.colour.setText("Colour");

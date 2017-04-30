@@ -24,4 +24,9 @@ public class RollActivity extends AppCompatActivity {
         Log.i("Roll id: ", roll_id.toString());
     }
 
+    @Override
+    public void onBackPressed(){
+        super.onBackPressed();
+        finish();
+    }
 }

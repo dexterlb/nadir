@@ -125,4 +125,10 @@ public class ManageRollsActivity extends AppCompatActivity  implements AddRollDi
                 return super.onContextItemSelected(item);
         }
     }
+
+    @Override
+    public void onBackPressed(){
+        super.onBackPressed();
+        finish();
+    }
 }

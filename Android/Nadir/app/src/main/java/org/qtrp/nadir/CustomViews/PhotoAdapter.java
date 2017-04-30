@@ -43,9 +43,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.MyViewHolder
 
         @Override
         public void onClick(View view) {
-            Intent intent = new Intent(view.getContext(), RollActivity.class);
-            intent.putExtra("photo_id", photoId);
-            view.getContext().startActivity(intent);
+
         }
     }
     public long getIdAt(int position) {

@@ -109,14 +109,23 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
         ArrayList<Photo> photos = new ArrayList<Photo>();
         SQLiteDatabase db = this.getReadableDatabase();
 
+        String whereClause = "rollId = ?";
+
+        String[] whereArgs = new String[] {
+                String.valueOf(rollId)
+        };
+
+        String orderBy = "timestamp";
+
+
         Cursor cursor = db.query(
                 FilmRollContract.Photo.TABLE_NAME,
+                null, //table columns
+                whereClause, //where clause
+                whereArgs, // where  values
                 null,
                 null,
-                null,
-                null,
-                null,
-                null
+                orderBy
         );
 
         while(cursor.moveToNext()) {

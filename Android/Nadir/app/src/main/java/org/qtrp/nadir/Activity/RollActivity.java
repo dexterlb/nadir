@@ -19,7 +19,7 @@ public class RollActivity extends AppCompatActivity {
         setContentView(R.layout.activity_roll_acticity);
 
         Intent intent = getIntent();
-        Integer roll_id = intent.getIntExtra("roll_id", -1);
+        Long roll_id = intent.getLongExtra("roll_id", -1);
 
         Log.i("Roll id: ", roll_id.toString());
     }

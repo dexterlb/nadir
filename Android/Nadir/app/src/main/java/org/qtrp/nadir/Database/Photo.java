@@ -11,16 +11,18 @@ public class Photo {
     Double longtitude;
     Long timestamp;
     String description;
+    Integer number;
 
     public Photo(){};
 
-    public Photo(Long photo_id, Long roll_id, Double latitude, Double longtitude, Long timestamp, String description) {
+    public Photo(Long photo_id, Long roll_id, Double latitude, Double longtitude, Long timestamp, String description, Integer number) {
         this.photo_id = photo_id;
         this.roll_id = roll_id;
         this.latitude = latitude;
         this.longtitude = longtitude;
         this.timestamp = timestamp;
         this.description = description;
+        this.number = number;
     }
 
     public Long getPhoto_id() {
@@ -63,6 +65,14 @@ public class Photo {
         this.timestamp = timestamp;
     }
 
+    public Integer getNumber() {
+        return number;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -79,6 +89,7 @@ public class Photo {
                 ", latitude=" + latitude +
                 ", longtitude=" + longtitude +
                 ", timestamp=" + timestamp +
+                ", number=" + number +
                 ", description='" + description + '\'' +
                 '}';
     }

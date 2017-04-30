@@ -115,7 +115,7 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
                 String.valueOf(rollId)
         };
 
-        String orderBy = "timestamp";
+        String orderBy = "number DESC";
 
 
         Cursor cursor = db.query(
@@ -135,7 +135,8 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
                     cursor.getDouble(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_LATITUDE)),
                     cursor.getDouble(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_LONGTITUDE)),
                     cursor.getLong(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_TIMESTAMP)),
-                    cursor.getString(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_DESCRIPTION))
+                    cursor.getString(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_DESCRIPTION)),
+                    cursor.getInt(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_NUMBER))
             );
 
             photos.add(photo);

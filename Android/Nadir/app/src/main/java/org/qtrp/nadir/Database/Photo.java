@@ -5,8 +5,8 @@ package org.qtrp.nadir.Database;
  */
 
 public class Photo {
-    Long photo_id;
-    Long roll_id;
+    Long photoId;
+    Long rollId;
     Double latitude;
     Double longtitude;
     Long timestamp;
@@ -16,8 +16,8 @@ public class Photo {
     public Photo(){};
 
     public Photo(Long photo_id, Long roll_id, Double latitude, Double longtitude, Long timestamp, String description, Integer number) {
-        this.photo_id = photo_id;
-        this.roll_id = roll_id;
+        this.photoId = photo_id;
+        this.rollId = roll_id;
         this.latitude = latitude;
         this.longtitude = longtitude;
         this.timestamp = timestamp;
@@ -25,20 +25,20 @@ public class Photo {
         this.number = number;
     }
 
-    public Long getPhoto_id() {
-        return photo_id;
+    public Long getPhotoId() {
+        return photoId;
     }
 
-    public void setPhoto_id(Long photo_id) {
-        this.photo_id = photo_id;
+    public void setPhotoId(Long photoId) {
+        this.photoId = photoId;
     }
 
-    public Long getRoll_id() {
-        return roll_id;
+    public Long getRollId() {
+        return rollId;
     }
 
-    public void setRoll_id(Long roll_id) {
-        this.roll_id = roll_id;
+    public void setRollId(Long rollId) {
+        this.rollId = rollId;
     }
 
     public Double getLatitude() {
@@ -84,8 +84,8 @@ public class Photo {
     @Override
     public String toString() {
         return "Photo{" +
-                "photo_id=" + photo_id +
-                "roll_id=" + roll_id +
+                "photoId=" + photoId +
+                "rollId=" + rollId +
                 ", latitude=" + latitude +
                 ", longtitude=" + longtitude +
                 ", timestamp=" + timestamp +

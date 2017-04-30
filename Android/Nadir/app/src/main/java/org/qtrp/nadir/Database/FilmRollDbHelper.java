@@ -3,7 +3,6 @@ package org.qtrp.nadir.Database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -90,7 +89,7 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
 
         ContentValues values = new ContentValues();
 
-        values.put(FilmRollContract.Photo.COLUMN_NAME_ROLL_ID, photo.getRoll_id());
+        values.put(FilmRollContract.Photo.COLUMN_NAME_ROLL_ID, photo.getRollId());
         values.put(FilmRollContract.Photo.COLUMN_NAME_LATITUDE, photo.getLatitude());
         values.put(FilmRollContract.Photo.COLUMN_NAME_LONGTITUDE, photo.getLongtitude());
         values.put(FilmRollContract.Photo.COLUMN_NAME_TIMESTAMP, photo.getTimestamp());

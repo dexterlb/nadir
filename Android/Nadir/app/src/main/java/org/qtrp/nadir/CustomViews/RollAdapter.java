@@ -26,7 +26,7 @@ public class RollAdapter extends RecyclerView.Adapter<RollAdapter.MyViewHolder> 
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView name, colour;
-        public int rollId;
+        public long rollId;
 
         public MyViewHolder(View view) {
             super(view);
@@ -71,6 +71,7 @@ public class RollAdapter extends RecyclerView.Adapter<RollAdapter.MyViewHolder> 
 
         holder.itemView.setLongClickable(true);
         holder.itemView.setOnClickListener(holder);
+        holder.rollId = roll.getId();
     }
 
     @Override

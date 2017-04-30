@@ -69,7 +69,6 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.MyViewHolder
         Double latitude = photo.getLatitude();
         Double longtitude = photo.getLongtitude();
         Long timestamp = photo.getTimestamp();
-        Integer number = photo.getNumber();
         String description = photo.getDescription();
 
         Date d = new Date(timestamp * 1000);
@@ -80,7 +79,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.MyViewHolder
         String location = "(" + formatter.format(latitude) + ", " + formatter.format(longtitude) + ")";
 
         holder.description.setText(description);
-        holder.number.setText(number);
+        holder.number.setText(String.valueOf(position));
         holder.timestamp.setText(pretty_date);
         holder.location.setText(location);
 

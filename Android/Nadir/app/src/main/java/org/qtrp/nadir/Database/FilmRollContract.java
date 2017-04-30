@@ -33,16 +33,14 @@ public final class FilmRollContract {
         public static final String COLUMN_NAME_TIMESTAMP = "timestamp";
         public static final String COLUMN_NAME_DESCRIPTION = "description";
         public static final String COLUMN_NAME_ROLL_ID = "rollId";
-        public static final String COLUMN_NAME_NUMBER = "number";
 
         public static final String SQL_CREATE = "CREATE TABLE " + Photo.TABLE_NAME + "(" +
                 Photo._ID + " INTEGER PRIMARY KEY, " +
                 Photo.COLUMN_NAME_LATITUDE + " DOUBLE, " +
                 Photo.COLUMN_NAME_LONGTITUDE + " DOUBLE, " +
                 Photo.COLUMN_NAME_TIMESTAMP + " INTEGER,  " +
-                Photo.COLUMN_NAME_DESCRIPTION + " TEXT " +
-                Photo.COLUMN_NAME_NUMBER + "INTEGER AUTOINCREMENT " +
-                " FOREIGN KEY (" + Photo.COLUMN_NAME_ROLL_ID + ") REFERENCES " + Roll.TABLE_NAME + "(" + Roll._ID + ") ON DELETE CASCADE );";
+                Photo.COLUMN_NAME_DESCRIPTION + " TEXT, " +
+                " FOREIGN KEY (" + Photo.COLUMN_NAME_ROLL_ID + ") REFERENCES " + Photo.TABLE_NAME + "(" + Photo._ID + ") ON DELETE CASCADE );";
 
         public static final String SQL_DROP = "DROP TABLE IF EXISTS " + Roll.TABLE_NAME;
     }

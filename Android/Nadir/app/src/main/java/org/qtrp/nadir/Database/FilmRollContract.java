@@ -26,5 +26,24 @@ public final class FilmRollContract {
 
     }
 
+    public static class Photo implements BaseColumns {
+        public static final String TABLE_NAME = "photo";
+        public static final String COLUMN_NAME_LATITUDE = "latitude";
+        public static final String COLUMN_NAME_LONGTITUDE = "longitude";
+        public static final String COLUMN_NAME_TIMESTAMP = "timestamp";
+        public static final String COLUMN_NAME_DESCRIPTION = "description";
+        public static final String COLUMN_NAME_ROLL_ID = "rollId";
+
+        public static final String SQL_CREATE = "CREATE TABLE " + Photo.TABLE_NAME + "(" +
+                Photo._ID + " INTEGER PRIMARY KEY, " +
+                Photo.COLUMN_NAME_LATITUDE + " DOUBLE, " +
+                Photo.COLUMN_NAME_LONGTITUDE + " DOUBLE, " +
+                Photo.COLUMN_NAME_TIMESTAMP + " INTEGER,  " +
+                Photo.COLUMN_NAME_DESCRIPTION + " TEXT " +
+                " FOREIGN KEY (" + Photo.COLUMN_NAME_ROLL_ID + ") REFERENCES " + Roll.TABLE_NAME + "(" + Roll._ID + ") ON DELETE CASCADE );";
+
+        public static final String SQL_DROP = "DROP TABLE IF EXISTS " + Roll.TABLE_NAME;
+    }
+
 
 }

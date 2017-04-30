@@ -13,6 +13,14 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "filmroll.db";
 
+    @Override
+    public void onOpen(SQLiteDatabase db) {
+        super.onOpen(db);
+        if (!db.isReadOnly()) {
+            db.execSQL("PRAGMA foreign_keys=ON;");
+        }
+    }
+
     public FilmRollDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -20,11 +28,13 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(FilmRollContract.Roll.SQL_CREATE);
+        sqLiteDatabase.execSQL(FilmRollContract.Photo.SQL_CREATE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         sqLiteDatabase.execSQL(FilmRollContract.Roll.SQL_DROP);
+        sqLiteDatabase.execSQL(FilmRollContract.Photo.SQL_DROP);
         onCreate(sqLiteDatabase);
     }
 
@@ -38,6 +48,7 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
 
         return db.insert(FilmRollContract.Roll.TABLE_NAME, null, values);
     }
+
 
     public void removeRoll(Long id) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -71,6 +82,58 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
 
         cursor.close();
         return rolls;
+    }
+
+
+    public long insertPhoto(Photo photo) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put(FilmRollContract.Photo.COLUMN_NAME_ROLL_ID, photo.getRoll_id());
+        values.put(FilmRollContract.Photo.COLUMN_NAME_LATITUDE, photo.getLatitude());
+        values.put(FilmRollContract.Photo.COLUMN_NAME_LONGTITUDE, photo.getLongtitude());
+        values.put(FilmRollContract.Photo.COLUMN_NAME_TIMESTAMP, photo.getTimestamp());
+        values.put(FilmRollContract.Photo.COLUMN_NAME_DESCRIPTION, photo.getDescription());
+
+        return db.insert(FilmRollContract.Photo.TABLE_NAME, null, values);
+    }
+
+    public void removePhoto(Long id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.delete(FilmRollContract.Photo.TABLE_NAME, FilmRollContract.Photo._ID + " = " + id, null);
+    }
+
+    public ArrayList<Photo> getPhotosByRollId(long rollId){
+        ArrayList<Photo> photos = new ArrayList<Photo>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(
+                FilmRollContract.Photo.TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+
+        while(cursor.moveToNext()) {
+            Photo photo = new Photo(
+                    cursor.getLong(cursor.getColumnIndex(FilmRollContract.Photo._ID)),
+                    cursor.getLong(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_ROLL_ID)),
+                    cursor.getDouble(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_LATITUDE)),
+                    cursor.getDouble(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_LONGTITUDE)),
+                    cursor.getLong(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_TIMESTAMP)),
+                    cursor.getString(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_DESCRIPTION))
+            );
+
+            photos.add(photo);
+        }
+
+        cursor.close();
+        return photos;
     }
 
 }

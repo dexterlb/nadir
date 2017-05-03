@@ -52,7 +52,7 @@ public class RollActivity extends AppCompatActivity {
 
     private void bindWidgets() {
         //settingsButton = (FloatingActionButton) findViewById(R.id.settingsButton);
-        addButton = (FloatingActionButton) findViewById(R.id.addPhotoButton);
+        //addButton = (FloatingActionButton) findViewById(R.id.addPhotoButton);
         photoList = (ContextMenuRecyclerView) findViewById(R.id.photoList);
     }
 

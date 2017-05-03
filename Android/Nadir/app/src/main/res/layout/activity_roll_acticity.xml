@@ -6,48 +6,90 @@
     android:layout_height="match_parent"
     tools:context="org.qtrp.nadir.Activity.RollActivity">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-    </android.support.design.widget.AppBarLayout>
-
     <include
         android:id="@+id/lay"
         layout="@layout/content_roll_activity" />
 
-    <org.qtrp.nadir.CustomViews.ContextMenuRecyclerView
-        android:id="@+id/photoList"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
 
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            android:layout_weight="0.4"
+            >
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/addPhotoButton"
-            android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/photoTimeTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textSize="30dp"
+                    android:text="12:25"
+                    android:gravity="center"
+                    android:layout_weight="0.6" />
+
+                <Button
+                    android:id="@+id/resetTimeButton"
+                    android:layout_width="0dp"
+                    android:text="Now"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_weight="0.4"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_height="wrap_content">
+
+
+                    <EditText
+                        android:id="@+id/latitudeEditText"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.3"
+                        android:layout_height="match_parent"
+                        android:ems="10"
+                        android:inputType="numberDecimal|numberSigned"
+                        android:text="42.45345" />
+
+                    <EditText
+                        android:id="@+id/longtitudeEditText"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.3"
+                        android:layout_height="match_parent"
+                        android:ems="10"
+                        android:inputType="numberDecimal|numberSigned"
+                        android:text="23.34535" />
+
+                <Button
+                    android:id="@+id/resetLocationButton"
+                    android:layout_width="0dp"
+                    android:text="Here"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_weight="0.4"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <org.qtrp.nadir.CustomViews.ContextMenuRecyclerView
+            android:id="@+id/photoList"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@android:color/transparent" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="+"
-            android:textSize="29dp"
-            android:elevation="16dp"
-            android:textColor="@android:color/white"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-    </FrameLayout>
+            android:layout_weight="0.6"
+            />
+    </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

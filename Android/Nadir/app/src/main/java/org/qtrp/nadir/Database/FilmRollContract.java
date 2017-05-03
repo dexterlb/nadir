@@ -40,6 +40,7 @@ public final class FilmRollContract {
                 Photo.COLUMN_NAME_LONGTITUDE + " DOUBLE, " +
                 Photo.COLUMN_NAME_TIMESTAMP + " INTEGER,  " +
                 Photo.COLUMN_NAME_DESCRIPTION + " TEXT, " +
+                Photo.COLUMN_NAME_ROLL_ID + " INTEGER, " +
                 " FOREIGN KEY (" + Photo.COLUMN_NAME_ROLL_ID + ") REFERENCES " + Photo.TABLE_NAME + "(" + Photo._ID + ") ON DELETE CASCADE );";
 
         public static final String SQL_DROP = "DROP TABLE IF EXISTS " + Roll.TABLE_NAME;

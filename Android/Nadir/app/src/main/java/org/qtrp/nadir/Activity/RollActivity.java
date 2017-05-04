@@ -1,6 +1,7 @@
 package org.qtrp.nadir.Activity;
 
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -11,11 +12,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.qtrp.nadir.CustomViews.ContextMenuRecyclerView;
 import org.qtrp.nadir.CustomViews.PhotoAdapter;
 import org.qtrp.nadir.Database.FilmRollDbHelper;
 import org.qtrp.nadir.Database.Photo;
+import org.qtrp.nadir.Helpers.LocationHelper;
 import org.qtrp.nadir.R;
 import org.w3c.dom.Text;
 
@@ -35,7 +38,7 @@ public class RollActivity extends AppCompatActivity {
 
     Calendar cal = Calendar.getInstance();
     SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-
+    private LocationHelper mGPS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +49,8 @@ public class RollActivity extends AppCompatActivity {
         roll_id = intent.getLongExtra("roll_id", -1);
 
         Log.i("Roll id: ", roll_id.toString());
+        mGPS = new LocationHelper(this);
+
 
         loadUtils();
         bindWidgets();
@@ -100,7 +105,20 @@ public class RollActivity extends AppCompatActivity {
             }
         });
 
-        
+        resetLocationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mGPS.canGetLocation ){
+                    mGPS.getLocation();
+                    latitudeEt.setText(String.valueOf(mGPS.getLatitude()));
+                    longituteEt.setText(String.valueOf(mGPS.getLongitude()));
+                } else {
+                    Toast.makeText(RollActivity.this, "Can't get location", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+
 
     }
 

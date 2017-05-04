@@ -37,8 +37,8 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.MyViewHolder
             super(view);
             number = (TextView) view.findViewById(R.id.tv_number);
             location = (TextView) view.findViewById(R.id.tv_location);
-            description = (TextView) view.findViewById(R.id.tv_photo_timestamp);
-            timestamp = (TextView) view.findViewById(R.id.tv_description);
+            description = (TextView) view.findViewById(R.id.tv_description);
+            timestamp = (TextView) view.findViewById(R.id.tv_photo_timestamp);
         }
 
         @Override
@@ -57,7 +57,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.MyViewHolder
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.roll_item, parent, false);
+                .inflate(R.layout.photo_item, parent, false);
 
         return new MyViewHolder(itemView);
     }
@@ -79,7 +79,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.MyViewHolder
         String location = "(" + formatter.format(latitude) + ", " + formatter.format(longtitude) + ")";
 
         holder.description.setText(description);
-        holder.number.setText(String.valueOf(position));
+        holder.number.setText(String.valueOf(position + 1));
         holder.timestamp.setText(pretty_date);
         holder.location.setText(location);
 
@@ -103,4 +103,9 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.MyViewHolder
     public void addAll(Collection<? extends Photo> photos) {
         photoList.addAll(photos);
     }
+
+    public void addOne(Photo photo) {
+        photoList.add(photo);
+    }
+
 }

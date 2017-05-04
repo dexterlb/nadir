@@ -95,6 +95,7 @@ public class RollActivity extends AppCompatActivity {
         photoList.setAdapter(adapter);
 
         setTime();
+        setLocation();
     }
 
     private void setListeners() {
@@ -108,13 +109,7 @@ public class RollActivity extends AppCompatActivity {
         resetLocationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mGPS.canGetLocation ){
-                    mGPS.getLocation();
-                    latitudeEt.setText(String.valueOf(mGPS.getLatitude()));
-                    longituteEt.setText(String.valueOf(mGPS.getLongitude()));
-                } else {
-                    Toast.makeText(RollActivity.this, "Can't get location", Toast.LENGTH_LONG).show();
-                }
+                setLocation();
             }
         });
 
@@ -128,6 +123,16 @@ public class RollActivity extends AppCompatActivity {
 
     private void setTime(){
         timeTv.setText(getTime());
+    }
+
+    private void setLocation() {
+        if(mGPS.canGetLocation ){
+            mGPS.getLocation();
+            latitudeEt.setText(String.format( "%.2f", mGPS.getLatitude() ));
+            longituteEt.setText(String.format( "%.2f", mGPS.getLongitude() ));
+        } else {
+            Toast.makeText(RollActivity.this, "Can't get location", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override

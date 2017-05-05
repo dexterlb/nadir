@@ -3,7 +3,6 @@ package org.qtrp.nadir.Activity;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -42,7 +41,6 @@ public class RollActivity extends AppCompatActivity {
     private Long roll_id;
     private PhotoAdapter adapter;
 
-    Calendar cal = Calendar.getInstance();
     SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
     private LocationHelper mGPS;
 
@@ -121,7 +119,7 @@ public class RollActivity extends AppCompatActivity {
     }
 
     private String getTime(){
-        return sdf.format(cal.getTime());
+        return sdf.format(Calendar.getInstance().getTime());
     }
 
     private void setTime(){

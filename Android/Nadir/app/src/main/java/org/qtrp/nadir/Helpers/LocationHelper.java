@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -16,8 +17,13 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.location.Geocoder;
 
 import org.qtrp.nadir.Activity.RollActivity;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by do on 04/05/17.
@@ -231,5 +237,32 @@ public final class LocationHelper implements LocationListener {
     }
 
 
+    public String friendlyLocationString(Double latitude, Double longtitude) {
+        Geocoder geoCoder = new Geocoder(mContext, Locale.getDefault());
+
+        StringBuilder builder = new StringBuilder();
+
+        String finalAddress = "";
+
+        try {
+            List<Address> address = geoCoder.getFromLocation(latitude, longitude, 1);
+            if (address.isEmpty()) {
+                return "";
+            }
+            int maxLines = address.get(0).getMaxAddressLineIndex();
+            for (int i=0; i<maxLines; i++) {
+                String addressStr = address.get(0).getAddressLine(i);
+                builder.append(addressStr);
+                builder.append(" ");
+            }
+
+            finalAddress = builder.toString(); //This is the complete address.
+        } catch (IOException e) {
+
+        }
+        catch (NullPointerException e) {}
+
+        return finalAddress;
+    }
 
 }

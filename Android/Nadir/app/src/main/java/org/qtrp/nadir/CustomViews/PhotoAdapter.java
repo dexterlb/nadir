@@ -1,5 +1,6 @@
 package org.qtrp.nadir.CustomViews;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
@@ -15,6 +16,7 @@ import org.qtrp.nadir.Activity.ManageRollsActivity;
 import org.qtrp.nadir.Activity.RollActivity;
 import org.qtrp.nadir.Database.Photo;
 import org.qtrp.nadir.Database.Roll;
+import org.qtrp.nadir.Helpers.LocationHelper;
 import org.qtrp.nadir.R;
 
 import java.text.DateFormat;
@@ -28,6 +30,7 @@ import java.util.List;
 public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.MyViewHolder> {
 
     private List<Photo> photoList;
+    private Context mContext;
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView location, timestamp, description, number;
@@ -59,6 +62,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.MyViewHolder
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.photo_item, parent, false);
 
+        mContext = parent.getContext();
         return new MyViewHolder(itemView);
     }
 
@@ -76,7 +80,9 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.MyViewHolder
         String pretty_date = df.format(d);
         NumberFormat formatter = new DecimalFormat("#0.00");
 
-        String location = "(" + formatter.format(latitude) + ", " + formatter.format(longtitude) + ")";
+        String friendlyLocation = new LocationHelper(mContext).friendlyLocationString(latitude, longtitude);
+
+        String location = friendlyLocation + " (" + formatter.format(latitude) + ", " + formatter.format(longtitude) + ")";
 
         holder.description.setText(description);
         holder.number.setText(String.valueOf(photoList.size() - position));

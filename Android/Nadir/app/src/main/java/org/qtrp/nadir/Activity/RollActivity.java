@@ -152,7 +152,7 @@ public class RollActivity extends AppCompatActivity {
                 new SlideDateTimePicker.Builder(getSupportFragmentManager()).setListener(new SlideDateTimeListener() {
                     @Override
                     public void onDateTimeSet(Date date) {
-                        setTime(date.getTime());
+                        setTime(date);
                     }
                 })
                         .setInitialDate(timestamp)
@@ -161,15 +161,15 @@ public class RollActivity extends AppCompatActivity {
         });
     }
 
-    private Long getTimeNow(){
+    private Date getTimeNow(){
         // correct time in the UTC timezone
         // represented as seconds since January 1, 1970 00:00:00 UTC
-        return System.currentTimeMillis()/1000;
+        return new Date(System.currentTimeMillis());
     }
 
 
-    private void setTime(Long time){
-        timestamp = new Date(time * 1000L);
+    private void setTime(Date time){
+        timestamp = time;
         timeTv.setText(sdf.format(timestamp));
     }
 

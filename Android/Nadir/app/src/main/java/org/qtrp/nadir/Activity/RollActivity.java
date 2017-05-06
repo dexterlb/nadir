@@ -44,7 +44,7 @@ public class RollActivity extends AppCompatActivity {
     private FilmRollDbHelper filmRollDbHelper;
     private Long roll_id;
     private PhotoAdapter adapter;
-    private Long timestamp;
+    private Date timestamp;
 
     SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
     private LocationHelper mGPS;
@@ -136,7 +136,7 @@ public class RollActivity extends AppCompatActivity {
                         roll_id,
                         Double.valueOf(latitudeEt.getText().toString()),
                         Double.valueOf(longituteEt.getText().toString()),
-                        timestamp,
+                        timestamp.getTime() / 1000,
                         descriptionEt.getText().toString()
                 ));
 
@@ -155,7 +155,7 @@ public class RollActivity extends AppCompatActivity {
                         setTime(date.getTime());
                     }
                 })
-                        .setInitialDate(new Date(timestamp * 1000))
+                        .setInitialDate(timestamp)
                         .build().show();
             }
         });
@@ -169,8 +169,8 @@ public class RollActivity extends AppCompatActivity {
 
 
     private void setTime(Long time){
-        timeTv.setText(sdf.format(new Date(time * 1000L)));
-        timestamp = time;
+        timestamp = new Date(time * 1000L);
+        timeTv.setText(sdf.format(timestamp));
     }
 
     private void setLocationForSDK() {

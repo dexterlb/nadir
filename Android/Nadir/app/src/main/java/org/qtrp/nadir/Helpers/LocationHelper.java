@@ -1,6 +1,7 @@
 package org.qtrp.nadir.Helpers;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,10 +10,14 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
+
+import org.qtrp.nadir.Activity.RollActivity;
 
 /**
  * Created by do on 04/05/17.
@@ -20,6 +25,7 @@ import android.util.Log;
 
 public final class LocationHelper implements LocationListener {
 
+    private static final int REQUEST_INTERNET =200;
     private final Context mContext;
 
     // flag for GPS status
@@ -223,5 +229,7 @@ public final class LocationHelper implements LocationListener {
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
     }
+
+
 
 }

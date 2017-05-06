@@ -61,23 +61,23 @@
                 android:layout_height="wrap_content">
 
 
-                    <EditText
-                        android:id="@+id/latitudeEditText"
-                        android:layout_width="0dp"
-                        android:layout_weight="0.3"
-                        android:layout_height="match_parent"
-                        android:ems="10"
-                        android:inputType="numberDecimal|numberSigned"
-                        android:text="42.45345" />
+                <EditText
+                    android:id="@+id/latitudeEditText"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.3"
+                    android:ems="10"
+                    android:inputType="numberDecimal|numberSigned"
+                    android:text="-1" />
 
-                    <EditText
-                        android:id="@+id/longtitudeEditText"
-                        android:layout_width="0dp"
-                        android:layout_weight="0.3"
-                        android:layout_height="match_parent"
-                        android:ems="10"
-                        android:inputType="numberDecimal|numberSigned"
-                        android:text="23.34535" />
+                <EditText
+                    android:id="@+id/longtitudeEditText"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.3"
+                    android:ems="10"
+                    android:inputType="numberDecimal|numberSigned"
+                    android:text="-1" />
 
                 <Button
                     android:id="@+id/resetLocationButton"

@@ -175,7 +175,6 @@ public class RollActivity extends AppCompatActivity {
 
     private void setLocationForSDK() {
         if(Integer.valueOf(Build.VERSION.SDK_INT) >= 23) {
-            Log.i("sdk", "This is the right sdk");
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -197,6 +196,7 @@ public class RollActivity extends AppCompatActivity {
             mGPS.getLocation();
             latitudeEt.setText(String.format( "%.6f", mGPS.getLatitude() ));
             longituteEt.setText(String.format( "%.6f", mGPS.getLongitude() ));
+            mGPS.stopUsingGPS();
         } else {
             Toast.makeText(RollActivity.this, "Can't get location", Toast.LENGTH_LONG).show();
         }

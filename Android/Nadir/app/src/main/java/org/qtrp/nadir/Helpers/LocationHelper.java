@@ -123,6 +123,7 @@ public final class LocationHelper implements LocationListener {
 
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
 
         return location;

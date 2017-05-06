@@ -24,6 +24,7 @@ import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class RollActivity extends AppCompatActivity {
@@ -35,6 +36,7 @@ public class RollActivity extends AppCompatActivity {
     private FilmRollDbHelper filmRollDbHelper;
     private Long roll_id;
     private PhotoAdapter adapter;
+    private Long timestamp;
 
     Calendar cal = Calendar.getInstance();
     SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
@@ -57,8 +59,14 @@ public class RollActivity extends AppCompatActivity {
         setDatasets();
         setListeners();
 
-        dummyData();
+        refreshDatasets();
 
+    }
+
+    private void refreshDatasets() {
+        adapter.clear();
+        adapter.addAll(filmRollDbHelper.getPhotosByRollId(roll_id));
+        adapter.notifyDataSetChanged();
     }
 
     private void dummyData() {
@@ -94,7 +102,7 @@ public class RollActivity extends AppCompatActivity {
         adapter = new PhotoAdapter(listItems);
         photoList.setAdapter(adapter);
 
-        setTime();
+        setTime(getTimeNow());
         setLocation();
     }
 
@@ -102,7 +110,7 @@ public class RollActivity extends AppCompatActivity {
         resetTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setTime();
+                setTime(getTimeNow());
             }
         });
 
@@ -113,23 +121,42 @@ public class RollActivity extends AppCompatActivity {
             }
         });
 
+        addPhotoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                filmRollDbHelper.insertPhoto(new Photo(
+                        null,
+                        roll_id,
+                        Double.valueOf(latitudeEt.getText().toString()),
+                        Double.valueOf(longituteEt.getText().toString()),
+                        timestamp,
+                        descriptionEt.getText().toString()
+                ));
 
+                descriptionEt.getText().clear();
+
+                refreshDatasets();
+            }
+        });
 
     }
 
-    private String getTime(){
-        return sdf.format(cal.getTime());
+    private Long getTimeNow(){
+        // correct time in the UTC timezone
+        // represented as seconds since January 1, 1970 00:00:00 UTC
+        return System.currentTimeMillis()/1000;
     }
 
-    private void setTime(){
-        timeTv.setText(getTime());
+    private void setTime(Long time){
+        timeTv.setText(sdf.format(new Date(time * 1000L)));
+        timestamp = time;
     }
 
     private void setLocation() {
         if(mGPS.canGetLocation ){
             mGPS.getLocation();
-            latitudeEt.setText(String.format( "%.2f", mGPS.getLatitude() ));
-            longituteEt.setText(String.format( "%.2f", mGPS.getLongitude() ));
+            latitudeEt.setText(String.format( "%.6f", mGPS.getLatitude() ));
+            longituteEt.setText(String.format( "%.6f", mGPS.getLongitude() ));
         } else {
             Toast.makeText(RollActivity.this, "Can't get location", Toast.LENGTH_LONG).show();
         }

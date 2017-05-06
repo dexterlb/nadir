@@ -79,7 +79,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.MyViewHolder
         String location = "(" + formatter.format(latitude) + ", " + formatter.format(longtitude) + ")";
 
         holder.description.setText(description);
-        holder.number.setText(String.valueOf(position + 1));
+        holder.number.setText(String.valueOf(photoList.size() - position));
         holder.timestamp.setText(pretty_date);
         holder.location.setText(location);
 

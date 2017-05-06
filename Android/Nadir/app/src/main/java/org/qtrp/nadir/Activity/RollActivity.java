@@ -46,8 +46,8 @@ public class RollActivity extends AppCompatActivity {
     private FilmRollDbHelper filmRollDbHelper;
     private Long roll_id;
     private PhotoAdapter adapter;
-    private Long timestamp;
     LinearLayout dummyFocus;
+    private Date timestamp;
 
     SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
     private LocationHelper mGPS;
@@ -140,7 +140,7 @@ public class RollActivity extends AppCompatActivity {
                         roll_id,
                         Double.valueOf(latitudeEt.getText().toString()),
                         Double.valueOf(longituteEt.getText().toString()),
-                        timestamp,
+                        timestamp.getTime() / 1000,
                         descriptionEt.getText().toString()
                 ));
 
@@ -160,30 +160,29 @@ public class RollActivity extends AppCompatActivity {
                 new SlideDateTimePicker.Builder(getSupportFragmentManager()).setListener(new SlideDateTimeListener() {
                     @Override
                     public void onDateTimeSet(Date date) {
-                        setTime(date.getTime());
+                        setTime(date);
                     }
                 })
-                        .setInitialDate(new Date(timestamp * 1000))
+                        .setInitialDate(timestamp)
                         .build().show();
             }
         });
     }
 
-    private Long getTimeNow(){
+    private Date getTimeNow(){
         // correct time in the UTC timezone
         // represented as seconds since January 1, 1970 00:00:00 UTC
-        return System.currentTimeMillis()/1000;
+        return new Date(System.currentTimeMillis());
     }
 
 
-    private void setTime(Long time){
-        timeTv.setText(sdf.format(new Date(time * 1000L)));
+    private void setTime(Date time){
         timestamp = time;
+        timeTv.setText(sdf.format(timestamp));
     }
 
     private void setLocationForSDK() {
         if(Integer.valueOf(Build.VERSION.SDK_INT) >= 23) {
-            Log.i("sdk", "This is the right sdk");
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -205,6 +204,7 @@ public class RollActivity extends AppCompatActivity {
             mGPS.getLocation();
             latitudeEt.setText(String.format( "%.6f", mGPS.getLatitude() ));
             longituteEt.setText(String.format( "%.6f", mGPS.getLongitude() ));
+            mGPS.stopUsingGPS();
         } else {
             Toast.makeText(RollActivity.this, "Can't get location", Toast.LENGTH_LONG).show();
         }

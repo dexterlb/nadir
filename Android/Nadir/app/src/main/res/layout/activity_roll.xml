@@ -11,9 +11,11 @@
         layout="@layout/content_roll_activity" />
 
     <LinearLayout
+        android:id="@+id/dummy_focus"
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:layout_width="0px"
+        android:orientation="horizontal"
         android:layout_height="0px"/>
 
     <LinearLayout

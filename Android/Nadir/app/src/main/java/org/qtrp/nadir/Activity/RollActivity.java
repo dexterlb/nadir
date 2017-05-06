@@ -13,8 +13,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +47,7 @@ public class RollActivity extends AppCompatActivity {
     private Long roll_id;
     private PhotoAdapter adapter;
     private Long timestamp;
+    LinearLayout dummyFocus;
 
     SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
     private LocationHelper mGPS;
@@ -92,6 +95,7 @@ public class RollActivity extends AppCompatActivity {
         descriptionEt = (EditText) findViewById(R.id.addDescriptionEditText);
         timeTv = (TextView) findViewById(R.id.photoTimeTextView);
         photoList = (ContextMenuRecyclerView) findViewById(R.id.photoList);
+        dummyFocus = (LinearLayout) findViewById(R.id.dummy_focus);
     }
 
     private void loadUtils() {
@@ -143,6 +147,10 @@ public class RollActivity extends AppCompatActivity {
                 descriptionEt.getText().clear();
 
                 refreshDatasets();
+                dummyFocus.requestFocus();
+
+                InputMethodManager imm =  (InputMethodManager) getSystemService(RollActivity.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(descriptionEt.getWindowToken(), 0);
             }
         });
 

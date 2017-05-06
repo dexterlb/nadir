@@ -18,6 +18,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
+import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
+
 import org.qtrp.nadir.CustomViews.ContextMenuRecyclerView;
 import org.qtrp.nadir.CustomViews.PhotoAdapter;
 import org.qtrp.nadir.Database.FilmRollDbHelper;
@@ -143,6 +146,19 @@ public class RollActivity extends AppCompatActivity {
             }
         });
 
+        timeTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new SlideDateTimePicker.Builder(getSupportFragmentManager()).setListener(new SlideDateTimeListener() {
+                    @Override
+                    public void onDateTimeSet(Date date) {
+                        setTime(date.getTime());
+                    }
+                })
+                        .setInitialDate(new Date(timestamp * 1000))
+                        .build().show();
+            }
+        });
     }
 
     private Long getTimeNow(){

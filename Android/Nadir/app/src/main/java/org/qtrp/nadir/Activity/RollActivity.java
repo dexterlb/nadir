@@ -3,7 +3,7 @@ package org.qtrp.nadir.Activity;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -18,7 +18,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
@@ -29,16 +28,16 @@ import org.qtrp.nadir.Database.FilmRollDbHelper;
 import org.qtrp.nadir.Database.Photo;
 import org.qtrp.nadir.Helpers.LocationHelper;
 import org.qtrp.nadir.R;
-import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 public class RollActivity extends AppCompatActivity {
 
-    private static final int ASK_MULTIPLE_PERMISSION_REQUEST_CODE = 200;
+    private static final int LOCATION_PERMISSION_ID = 200;
+    private static final String TAG = "RollActivity";
+
     private Button addPhotoButton, resetLocationButton, resetTimeButton;
     private EditText longituteEt, latitudeEt, descriptionEt;
     private TextView timeTv;
@@ -49,7 +48,7 @@ public class RollActivity extends AppCompatActivity {
     LinearLayout dummyFocus;
     private Date timestamp;
 
-    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+    SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
     private LocationHelper mGPS;
 
     @Override
@@ -67,16 +66,45 @@ public class RollActivity extends AppCompatActivity {
         loadUtils();
         bindWidgets();
         setDatasets();
+        initLocation();
         setListeners();
 
         refreshDatasets();
 
     }
 
+    private void initLocation() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_ID);
+            return;
+        } else {
+            Log.v(TAG,"permissions are fine. starting.");
+        }
+        mGPS.start();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case LOCATION_PERMISSION_ID: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.v(TAG, "location permission granted.");
+                } else {
+                    Log.v(TAG, "location permission declined");
+                }
+                initLocation();
+            }
+        }
+    }
+
+
     private void refreshDatasets() {
         adapter.clear();
         adapter.addAll(filmRollDbHelper.getPhotosByRollId(roll_id));
         adapter.notifyDataSetChanged();
+        reloadAddresses();
     }
 
     private void dummyData() {
@@ -114,7 +142,6 @@ public class RollActivity extends AppCompatActivity {
         photoList.setAdapter(adapter);
 
         setTime(getTimeNow());
-        setLocationForSDK();
     }
 
     private void setListeners() {
@@ -128,7 +155,7 @@ public class RollActivity extends AppCompatActivity {
         resetLocationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setLocationForSDK();
+                setLocation();
             }
         });
 
@@ -178,62 +205,39 @@ public class RollActivity extends AppCompatActivity {
 
     private void setTime(Date time){
         timestamp = time;
-        timeTv.setText(sdf.format(timestamp));
-    }
-
-    private void setLocationForSDK() {
-        if(Integer.valueOf(Build.VERSION.SDK_INT) >= 23) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(this,
-                            new String[]{Manifest.permission.INTERNET,
-                                         Manifest.permission.ACCESS_FINE_LOCATION,
-                                         Manifest.permission.ACCESS_FINE_LOCATION},
-                            ASK_MULTIPLE_PERMISSION_REQUEST_CODE);
-            } else {
-                setLocation();
-            }
-        } else {
-            setLocation();
-        }
+        timeTv.setText(dateFormat.format(timestamp));
     }
 
     private void setLocation(){
-        if (mGPS.canGetLocation) {
-            mGPS.getLocation();
-            latitudeEt.setText(String.format( "%.6f", mGPS.getLatitude() ));
-            longituteEt.setText(String.format( "%.6f", mGPS.getLongitude() ));
-            mGPS.stopUsingGPS();
-        } else {
-            Toast.makeText(RollActivity.this, "Can't get location", Toast.LENGTH_LONG).show();
-        }
+        latitudeEt.setText(String.format( "%.6f", mGPS.getLatitude() ));
+        longituteEt.setText(String.format( "%.6f", mGPS.getLongitude() ));
     }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        Log.i("sdk", "on result");
-        if (requestCode == ASK_MULTIPLE_PERMISSION_REQUEST_CODE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                setLocation();
-            }else if (grantResults[0] == PackageManager.PERMISSION_DENIED){
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.INTERNET)) {
-                    ActivityCompat.requestPermissions(this,
-                            new String[]{Manifest.permission.INTERNET,
-                                    Manifest.permission.ACCESS_FINE_LOCATION,
-                                    Manifest.permission.ACCESS_FINE_LOCATION},
-                            ASK_MULTIPLE_PERMISSION_REQUEST_CODE);
-                }else{
-                    //Never ask again and handle your app without permission.
-                }
-            }
-        }
-    }
-
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         finish();
+    }
+
+    public void reloadAddresses() {
+        for (int i = 0; i < adapter.getItemCount(); i++) {
+            final Photo photo = adapter.getItem(i);
+            if (photo.hasAddress()) {
+                continue;
+            }
+
+            final int ii = i;
+            mGPS.getAddress(photo.getLocation(), new LocationHelper.OnGotAddressListener() {
+
+                @Override
+                public void OnGotAddress(Location location, String address) {
+                    if (address == null) {
+                        return;
+                    }
+                    filmRollDbHelper.updateAddress(location, address);
+                    refreshDatasets();
+                };
+            });
+        }
     }
 }

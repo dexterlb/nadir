@@ -1,27 +1,17 @@
 package org.qtrp.nadir.CustomViews;
 
 import android.content.Context;
-import android.content.Intent;
+import android.location.Location;
 import android.support.v7.widget.RecyclerView;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.qtrp.nadir.Activity.ManageRollsActivity;
-import org.qtrp.nadir.Activity.RollActivity;
 import org.qtrp.nadir.Database.Photo;
-import org.qtrp.nadir.Database.Roll;
-import org.qtrp.nadir.Helpers.LocationHelper;
 import org.qtrp.nadir.R;
 
 import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
@@ -70,24 +60,18 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.MyViewHolder
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         Photo photo = photoList.get(position);
 
-        Double latitude = photo.getLatitude();
-        Double longtitude = photo.getLongtitude();
         Long timestamp = photo.getTimestamp();
         String description = photo.getDescription();
 
         Date d = new Date(timestamp * 1000);
         DateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm");
         String pretty_date = df.format(d);
-        NumberFormat formatter = new DecimalFormat("#0.00");
 
-        String friendlyLocation = new LocationHelper(mContext).friendlyLocationString(latitude, longtitude);
-
-        String location = friendlyLocation + " (" + formatter.format(latitude) + ", " + formatter.format(longtitude) + ")";
+        holder.location.setText(photo.getFriendlyLocation());
 
         holder.description.setText(description);
         holder.number.setText(String.valueOf(photoList.size() - position));
         holder.timestamp.setText(pretty_date);
-        holder.location.setText(location);
 
         holder.itemView.setLongClickable(true);
         holder.itemView.setOnClickListener(holder);

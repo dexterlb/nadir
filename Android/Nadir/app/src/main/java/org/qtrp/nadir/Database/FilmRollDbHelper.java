@@ -91,7 +91,7 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
 
         values.put(FilmRollContract.Photo.COLUMN_NAME_ROLL_ID, photo.getRollId());
         values.put(FilmRollContract.Photo.COLUMN_NAME_LATITUDE, photo.getLatitude());
-        values.put(FilmRollContract.Photo.COLUMN_NAME_LONGTITUDE, photo.getLongtitude());
+        values.put(FilmRollContract.Photo.COLUMN_NAME_LONGTITUDE, photo.getLongitude());
         values.put(FilmRollContract.Photo.COLUMN_NAME_TIMESTAMP, photo.getTimestamp());
         values.put(FilmRollContract.Photo.COLUMN_NAME_DESCRIPTION, photo.getDescription());
 

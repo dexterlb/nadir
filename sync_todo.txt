@@ -1,0 +1,60 @@
+# Sync todo list
+
+- make everything in the database use UUID's instead of IDs, so there aren't
+  collisions with IDs on different devices
+- add a last_change column to all items which is milliseconds since 1970-01-01 00:00 UTC
+- don't actually "delete" items - instead add an "is_deleted" column, and make
+  all selects match only not deleted items. when adding a new item, find an
+  old deleted item and resurrect it. only add a new one if there's no old one
+  available.
+
+
+# Sync procedure
+
+- step 1: perform a Get. Update all items whose received last_changed is newer
+  than local. Add any items which are not locally present.
+- step 2: push all items whose local last_changed is greater than the one
+  received from sync
+
+# Sync api
+
+get an url in the form: https://foo.example.com/bla/bla/#/some_space_key
+
+* /get:
+    request:
+        {
+            "spaces": ["space1_key", "space2_key" ...]
+        }
+
+    response:
+        {
+            "records": [
+                {
+                    "space": "space_key",
+                    "key": "record_key",    // must be unique for this space
+                    "last_change": 12345,   // number of milliseconds since epoch
+                    "data": {}
+                }
+
+                ...
+            ],
+            "last_change": 12345            // last change of all records in the space
+                                            // equal to max(last_change forall records)
+        }
+
+* /push
+    request:
+        {
+            "records": [
+                {
+                    "space": "space_key",
+                    "key": "record_key",    // must be unique for this space
+                    "last_change": 12345,   // number of milliseconds since epoch
+                    "data": {}
+                }
+
+                ...
+            ]
+        }
+    response:
+        "ok"

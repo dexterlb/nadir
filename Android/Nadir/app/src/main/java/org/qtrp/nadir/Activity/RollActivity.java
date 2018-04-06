@@ -226,9 +226,7 @@ public class RollActivity extends AppCompatActivity {
                 continue;
             }
 
-            final int ii = i;
             mGPS.getAddress(photo.getLocation(), new LocationHelper.OnGotAddressListener() {
-
                 @Override
                 public void OnGotAddress(Location location, String address) {
                     if (address == null) {

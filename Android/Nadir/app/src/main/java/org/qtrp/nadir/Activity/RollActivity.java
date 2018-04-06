@@ -232,7 +232,7 @@ public class RollActivity extends AppCompatActivity {
                     if (address == null) {
                         return;
                     }
-                    filmRollDbHelper.updateAddress(location, address);
+                    // filmRollDbHelper.updateAddress(location, address);
                     refreshDatasets();
                 };
             });

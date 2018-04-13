@@ -29,12 +29,27 @@ public class LocationHelper {
         this.lastLocation = null;
     }
 
+    public interface OnGotLocationListener {
+        void OnGotLocation(Location location);
+    }
+
+    public void setOnGotLocationListener(OnGotLocationListener onGotLocationListener) {
+        this.onGotLocationListener = onGotLocationListener;
+    }
+
+    private OnGotLocationListener onGotLocationListener;
+
     public void start() {
         SmartLocation.with(activity).location().start(new OnLocationUpdatedListener() {
             @Override
             public void onLocationUpdated(Location location) {
-                Log.v(TAG, "got a location.");
+                if (location != null) {
+                    Log.v(TAG, "got a location.");
+                } else {
+                    Log.v(TAG, "got a location, but it is null :(");
+                }
                 lastLocation = location;
+                onGotLocationListener.OnGotLocation(location);
             }
         });
 
@@ -47,19 +62,19 @@ public class LocationHelper {
         Log.v(TAG, "stopped!");
     }
 
-    public double getLatitude() {
+    public Double getLatitude() {
         if (lastLocation != null) {
             return lastLocation.getLatitude();
         } else {
-            return -1;
+            return null;
         }
     }
 
-    public double getLongitude() {
+    public Double getLongitude() {
         if (lastLocation != null) {
             return lastLocation.getLongitude();
         } else {
-            return -1;
+            return null;
         }
     }
 

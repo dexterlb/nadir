@@ -66,14 +66,27 @@ public class RollActivity extends AppCompatActivity {
         loadUtils();
         bindWidgets();
         setDatasets();
-        initLocation();
         setListeners();
 
         refreshDatasets();
 
     }
 
-    private void initLocation() {
+    @Override
+    protected void onStart() {
+        super.onStart();
+        startLocation();
+        latitudeEt.setText("");
+        longituteEt.setText("");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        stopLocation();
+    }
+
+    private void startLocation() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_ID);
             return;
@@ -81,6 +94,10 @@ public class RollActivity extends AppCompatActivity {
             Log.v(TAG,"permissions are fine. starting.");
         }
         mGPS.start();
+    }
+
+    private void stopLocation() {
+        mGPS.stop();
     }
 
     @Override
@@ -94,7 +111,7 @@ public class RollActivity extends AppCompatActivity {
                 } else {
                     Log.v(TAG, "location permission declined");
                 }
-                initLocation();
+                startLocation();
             }
         }
     }
@@ -145,6 +162,15 @@ public class RollActivity extends AppCompatActivity {
     }
 
     private void setListeners() {
+        mGPS.setOnGotLocationListener(new LocationHelper.OnGotLocationListener() {
+            @Override
+            public void OnGotLocation(Location location) {
+                if (latitudeEt.getText().length() == 0 && longituteEt.getText().length() == 0) {
+                    setLocation();
+                }
+            }
+        });
+
         resetTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -165,8 +191,8 @@ public class RollActivity extends AppCompatActivity {
                 filmRollDbHelper.insertPhoto(new Photo(
                         null,
                         roll_id,
-                        Double.valueOf(latitudeEt.getText().toString()),
-                        Double.valueOf(longituteEt.getText().toString()),
+                        parseDouble(latitudeEt.getText().toString()),
+                        parseDouble(longituteEt.getText().toString()),
                         timestamp.getTime() / 1000,
                         descriptionEt.getText().toString()
                 ));
@@ -208,9 +234,11 @@ public class RollActivity extends AppCompatActivity {
         timeTv.setText(dateFormat.format(timestamp));
     }
 
-    private void setLocation(){
-        latitudeEt.setText(String.format( "%.6f", mGPS.getLatitude() ));
-        longituteEt.setText(String.format( "%.6f", mGPS.getLongitude() ));
+    private void setLocation() {
+        if (mGPS.getLatitude() != null && mGPS.getLatitude() != null) {
+            latitudeEt.setText(String.format("%.6f", mGPS.getLatitude()));
+            longituteEt.setText(String.format("%.6f", mGPS.getLongitude()));
+        }
     }
 
     @Override
@@ -222,9 +250,11 @@ public class RollActivity extends AppCompatActivity {
     public void reloadAddresses() {
         for (int i = 0; i < adapter.getItemCount(); i++) {
             final Photo photo = adapter.getItem(i);
-            if (photo.hasAddress()) {
+            if (!photo.mustUpdateAddress()) {
                 continue;
             }
+
+            // filmRollDbHelper.setLastAddressUpdateTimestamp(photo.getPhotoId(), System.currentTimeMillis() / 1000);
 
             mGPS.getAddress(photo.getLocation(), new LocationHelper.OnGotAddressListener() {
                 @Override
@@ -233,9 +263,17 @@ public class RollActivity extends AppCompatActivity {
                         return;
                     }
                     // filmRollDbHelper.updateAddress(location, address);
-                    refreshDatasets();
+                    // refreshDatasets();
                 };
             });
+        }
+    }
+
+    private Double parseDouble(String s) {
+        try {
+            return Double.valueOf(s);
+        } catch(NumberFormatException e) {
+            return null;
         }
     }
 }

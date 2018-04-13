@@ -69,8 +69,8 @@
                     android:layout_height="match_parent"
                     android:layout_weight="0.3"
                     android:ems="10"
-                    android:inputType="numberDecimal|numberSigned"
-                    android:text="-1" />
+                    android:hint="Latitude"
+                    android:inputType="numberDecimal|numberSigned" />
 
                 <EditText
                     android:id="@+id/longtitudeEditText"
@@ -78,8 +78,8 @@
                     android:layout_height="match_parent"
                     android:layout_weight="0.3"
                     android:ems="10"
-                    android:inputType="numberDecimal|numberSigned"
-                    android:text="-1" />
+                    android:hint="Longitude"
+                    android:inputType="numberDecimal|numberSigned" />
 
                 <Button
                     android:id="@+id/resetLocationButton"
@@ -94,7 +94,8 @@
             <EditText
                 android:id="@+id/addDescriptionEditText"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:hint="Description" />
 
             <Button
                 android:id="@+id/addPhotoButton"

@@ -1,4 +1,20 @@
-# Sync todo list
+# Todo list
+
+## Fix address loading
+
+- store Address and Last Address Update in Photo in the database
+- implement setAddressUpdateTimestamp() and updateAddress()
+
+## Implement photo editing and deleting
+
+- Add a save/delete panel in the roll activity with Save and Delete buttons
+- Make items in the photo list selectable (one at a time)
+- When an item is selected, go to edit mode:
+    - hide the snap panel and show the save/delete panel
+    - load the item data into the fields
+- When clicking save or delete, deselect the item and reset the fields
+
+## Refactor the database to allow for sync
 
 - make everything in the database use UUID's instead of IDs, so there aren't
   collisions with IDs on different devices

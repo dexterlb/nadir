@@ -47,6 +47,8 @@ public class RollActivity extends AppCompatActivity {
     private PhotoAdapter adapter;
     LinearLayout dummyFocus;
     private Date timestamp;
+    private LinearLayout editPhotoButtonsLayout;
+    private LinearLayout newPhotoButtonsLayout;
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
     private LocationHelper mGPS;
@@ -65,11 +67,25 @@ public class RollActivity extends AppCompatActivity {
 
         loadUtils();
         bindWidgets();
+
+        snapMode();
+
         setDatasets();
         setListeners();
 
         refreshDatasets();
 
+    }
+
+    private void editMode() {
+        editPhotoButtonsLayout.setVisibility(View.VISIBLE);
+        newPhotoButtonsLayout.setVisibility(View.GONE);
+
+    }
+
+    private void snapMode() {
+        newPhotoButtonsLayout.setVisibility(View.VISIBLE);
+        editPhotoButtonsLayout.setVisibility(View.GONE);
     }
 
     @Override
@@ -141,6 +157,8 @@ public class RollActivity extends AppCompatActivity {
         timeTv = (TextView) findViewById(R.id.photoTimeTextView);
         photoList = (ContextMenuRecyclerView) findViewById(R.id.photoList);
         dummyFocus = (LinearLayout) findViewById(R.id.dummy_focus);
+        editPhotoButtonsLayout = (LinearLayout) findViewById(R.id.editPhotoButtonsLayout);
+        newPhotoButtonsLayout = (LinearLayout) findViewById(R.id.newPhotoButtonsLayout);
     }
 
     private void loadUtils() {

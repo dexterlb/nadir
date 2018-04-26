@@ -98,6 +98,26 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
         return db.insert(FilmRollContract.Photo.TABLE_NAME, null, values);
     }
 
+    public long updatePhoto(Photo photo) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+
+        ContentValues values = new ContentValues();
+        String whereClause = "_ID = ?";
+        String[] whereArgs = new String[] {
+                String.valueOf(photo.getPhotoId())
+        };
+
+
+        values.put(FilmRollContract.Photo.COLUMN_NAME_ROLL_ID, photo.getRollId());
+        values.put(FilmRollContract.Photo.COLUMN_NAME_LATITUDE, photo.getLatitude());
+        values.put(FilmRollContract.Photo.COLUMN_NAME_LONGTITUDE, photo.getLongitude());
+        values.put(FilmRollContract.Photo.COLUMN_NAME_TIMESTAMP, photo.getTimestamp());
+        values.put(FilmRollContract.Photo.COLUMN_NAME_DESCRIPTION, photo.getDescription());
+
+        return db.update(FilmRollContract.Photo.TABLE_NAME,values, whereClause, whereArgs);
+    }
+
     public void removePhoto(Long id) {
         SQLiteDatabase db = this.getWritableDatabase();
 

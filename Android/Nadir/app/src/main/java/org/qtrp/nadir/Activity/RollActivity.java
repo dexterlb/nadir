@@ -101,6 +101,12 @@ public class RollActivity extends AppCompatActivity {
         setLocation();
         descriptionEt.setText("");
         setTime(getTimeNow());
+
+        refreshDatasets();
+        dummyFocus.requestFocus();
+
+        InputMethodManager imm =  (InputMethodManager) getSystemService(RollActivity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(descriptionEt.getWindowToken(), 0);
     }
 
     @Override
@@ -195,6 +201,17 @@ public class RollActivity extends AppCompatActivity {
         setTime(getTimeNow());
     }
 
+    private Photo setFields(Long photo_id, Long roll_id){
+        return new Photo(
+                photo_id,
+                roll_id,
+                parseDouble(latitudeEt.getText().toString()),
+                parseDouble(longituteEt.getText().toString()),
+                timestamp.getTime() / 1000,
+                descriptionEt.getText().toString()
+        );
+    };
+
     private void setListeners() {
         mGPS.setOnGotLocationListener(new LocationHelper.OnGotLocationListener() {
             @Override
@@ -222,22 +239,11 @@ public class RollActivity extends AppCompatActivity {
         addPhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                filmRollDbHelper.insertPhoto(new Photo(
+                filmRollDbHelper.insertPhoto(setFields(
                         null,
-                        roll_id,
-                        parseDouble(latitudeEt.getText().toString()),
-                        parseDouble(longituteEt.getText().toString()),
-                        timestamp.getTime() / 1000,
-                        descriptionEt.getText().toString()
-                ));
-
-                descriptionEt.getText().clear();
-
-                refreshDatasets();
-                dummyFocus.requestFocus();
-
-                InputMethodManager imm =  (InputMethodManager) getSystemService(RollActivity.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(descriptionEt.getWindowToken(), 0);
+                        roll_id)
+                );
+                snapMode();
             }
         });
 
@@ -248,6 +254,18 @@ public class RollActivity extends AppCompatActivity {
             }
         });
 
+        savePhotoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editingPhoto = setFields(editingPhoto.getPhotoId(), editingPhoto.getRollId());
+
+
+                filmRollDbHelper.updatePhoto(editingPhoto);
+                snapMode();
+            }
+        });
+
+
         deletePhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -256,6 +274,7 @@ public class RollActivity extends AppCompatActivity {
                 refreshDatasets();
             }
         });
+
 
         timeTv.setOnClickListener(new View.OnClickListener() {
             @Override

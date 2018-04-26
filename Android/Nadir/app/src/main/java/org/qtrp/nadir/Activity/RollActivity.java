@@ -38,7 +38,7 @@ public class RollActivity extends AppCompatActivity {
     private static final int LOCATION_PERMISSION_ID = 200;
     private static final String TAG = "RollActivity";
 
-    private Button addPhotoButton, resetLocationButton, resetTimeButton;
+    private Button addPhotoButton, resetLocationButton, resetTimeButton, cancelButton, deletePhotoButton, savePhotoButton;
     private EditText longituteEt, latitudeEt, descriptionEt;
     private TextView timeTv;
     private ContextMenuRecyclerView photoList;
@@ -68,32 +68,41 @@ public class RollActivity extends AppCompatActivity {
         loadUtils();
         bindWidgets();
 
-        snapMode();
-
         setDatasets();
+
+        snapMode();
         setListeners();
 
         refreshDatasets();
 
     }
 
-    private void editMode() {
+    private void editMode(Photo photo) {
+        adapter.setCanSelect(false);
         editPhotoButtonsLayout.setVisibility(View.VISIBLE);
         newPhotoButtonsLayout.setVisibility(View.GONE);
 
+        descriptionEt.setText(photo.getDescription());
+        setLocation(photo.getLatitude(), photo.getLongitude());
+        setTime(new Date(photo.getTimestamp() * 1000));
     }
 
     private void snapMode() {
+        adapter.setCanSelect(true);
+        adapter.deselect();
         newPhotoButtonsLayout.setVisibility(View.VISIBLE);
         editPhotoButtonsLayout.setVisibility(View.GONE);
+        latitudeEt.setText("");
+        longituteEt.setText("");
+        setLocation();
+        descriptionEt.setText("");
+        setTime(getTimeNow());
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         startLocation();
-        latitudeEt.setText("");
-        longituteEt.setText("");
     }
 
     @Override
@@ -151,6 +160,9 @@ public class RollActivity extends AppCompatActivity {
         addPhotoButton = (Button) findViewById(R.id.addPhotoButton);
         resetLocationButton = (Button) findViewById(R.id.resetLocationButton);
         resetTimeButton = (Button) findViewById(R.id.resetTimeButton);
+        cancelButton = (Button) findViewById(R.id.cancelButton);
+        deletePhotoButton = (Button) findViewById(R.id.deletePhotoButton);
+        savePhotoButton = (Button) findViewById(R.id.savePhotoButton);
         longituteEt = (EditText) findViewById(R.id.longtitudeEditText);
         latitudeEt = (EditText) findViewById(R.id.latitudeEditText);
         descriptionEt = (EditText) findViewById(R.id.addDescriptionEditText);
@@ -225,6 +237,13 @@ public class RollActivity extends AppCompatActivity {
             }
         });
 
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                snapMode();
+            }
+        });
+
         timeTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -236,6 +255,13 @@ public class RollActivity extends AppCompatActivity {
                 })
                         .setInitialDate(timestamp)
                         .build().show();
+            }
+        });
+
+        adapter.setOnItemSelectedListener(new PhotoAdapter.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(int position) {
+                editMode(adapter.getItem(position));
             }
         });
     }
@@ -253,10 +279,14 @@ public class RollActivity extends AppCompatActivity {
     }
 
     private void setLocation() {
-        if (mGPS.getLatitude() != null && mGPS.getLatitude() != null) {
-            latitudeEt.setText(String.format("%.6f", mGPS.getLatitude()));
-            longituteEt.setText(String.format("%.6f", mGPS.getLongitude()));
+        if (mGPS.getLongitude() != null && mGPS.getLatitude() != null) {
+            setLocation(mGPS.getLatitude(), mGPS.getLongitude());
         }
+    }
+
+    private void setLocation(Double latitude, Double longitude) {
+        latitudeEt.setText(String.format("%.6f", latitude));
+        longituteEt.setText(String.format("%.6f", longitude));
     }
 
     @Override

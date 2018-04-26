@@ -3,6 +3,7 @@ package org.qtrp.nadir.CustomViews;
 import android.content.Context;
 import android.location.Location;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.MyViewHolder
 
     private List<Photo> photoList;
     private Context mContext;
+    private int selectedPos = RecyclerView.NO_POSITION;
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView location, timestamp, description, number;
@@ -36,9 +38,51 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.MyViewHolder
 
         @Override
         public void onClick(View view) {
-
+            select(getLayoutPosition());
         }
     }
+
+    public interface OnItemSelectedListener {
+        public void onItemSelected(int position);
+    }
+
+    public void setOnItemSelectedListener(OnItemSelectedListener onItemSelectedListener) {
+        this.onItemSelectedListener = onItemSelectedListener;
+    }
+
+    public boolean canSelect() {
+        return canSelect;
+    }
+
+    public void setCanSelect(boolean canSelect) {
+        this.canSelect = canSelect;
+    }
+
+    private boolean canSelect;
+
+    private OnItemSelectedListener onItemSelectedListener;
+
+    public void select(int position) {
+        if (!canSelect) {
+            return;
+        }
+
+        notifyItemChanged(selectedPos);
+        selectedPos = position;
+        notifyItemChanged(selectedPos);
+        if (onItemSelectedListener != null) {
+            onItemSelectedListener.onItemSelected(position);
+        }
+    }
+
+    public void deselect() {
+        int oldPos = selectedPos;
+        notifyItemChanged(selectedPos);
+        selectedPos = RecyclerView.NO_POSITION;
+        notifyItemChanged(selectedPos);
+        notifyItemChanged(oldPos);
+    }
+
     public long getIdAt(int position) {
         return this.photoList.get(position).getPhotoId();
     }
@@ -75,6 +119,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.MyViewHolder
 
         holder.itemView.setLongClickable(true);
         holder.itemView.setOnClickListener(holder);
+        holder.itemView.setSelected(selectedPos == position);
     }
 
     @Override

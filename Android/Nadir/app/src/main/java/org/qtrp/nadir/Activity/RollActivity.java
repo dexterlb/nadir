@@ -52,6 +52,7 @@ public class RollActivity extends AppCompatActivity {
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
     private LocationHelper mGPS;
+    private Photo editingPhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,11 +86,14 @@ public class RollActivity extends AppCompatActivity {
         descriptionEt.setText(photo.getDescription());
         setLocation(photo.getLatitude(), photo.getLongitude());
         setTime(new Date(photo.getTimestamp() * 1000));
+
+        editingPhoto = photo;
     }
 
     private void snapMode() {
         adapter.setCanSelect(true);
         adapter.deselect();
+        editingPhoto = null;
         newPhotoButtonsLayout.setVisibility(View.VISIBLE);
         editPhotoButtonsLayout.setVisibility(View.GONE);
         latitudeEt.setText("");
@@ -241,6 +245,15 @@ public class RollActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 snapMode();
+            }
+        });
+
+        deletePhotoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                filmRollDbHelper.removePhoto(editingPhoto.getPhotoId());
+                snapMode();
+                refreshDatasets();
             }
         });
 

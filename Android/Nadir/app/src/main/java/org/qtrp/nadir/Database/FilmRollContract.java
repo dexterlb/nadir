@@ -34,6 +34,8 @@ public final class FilmRollContract {
         public static final String COLUMN_NAME_DESCRIPTION = "description";
         public static final String COLUMN_NAME_ROLL_ID = "rollId";
         public static final String COLUMN_NAME_LAST_UPDATE = "lastUpdate";
+        public static final String COLUMN_NAME_UNIQUE_ID = "uniqueId";
+        public static final String COLUMN_NAME_IS_DELETED = "isDeleted";
 
         public static final String SQL_CREATE = "CREATE TABLE " + Photo.TABLE_NAME + "(" +
                 Photo._ID + " INTEGER PRIMARY KEY, " +
@@ -43,6 +45,8 @@ public final class FilmRollContract {
                 Photo.COLUMN_NAME_DESCRIPTION + " TEXT, " +
                 Photo.COLUMN_NAME_ROLL_ID + " INTEGER, " +
                 Photo.COLUMN_NAME_LAST_UPDATE + " INTEGER, " +
+                Photo.COLUMN_NAME_UNIQUE_ID + " TEXT, " +
+                Photo.COLUMN_NAME_IS_DELETED + " INTEGER, " +
                 " FOREIGN KEY (" + Photo.COLUMN_NAME_ROLL_ID + ") REFERENCES " + Photo.TABLE_NAME + "(" + Photo._ID + ") ON DELETE CASCADE );";
 
         public static final String SQL_DROP = "DROP TABLE IF EXISTS " + Roll.TABLE_NAME;

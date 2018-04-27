@@ -22,10 +22,14 @@ public class Photo {
     Long lastAddressUpdateTimestamp = Long.valueOf(0);
 
     Long lastUpdate;
+    String uniqueId;
+    Integer isDeleted;
+
+
 
     public Photo(){};
 
-    public Photo(Long photo_id, Long roll_id, Double latitude, Double longitude, Long timestamp, String description, Long lastUpdate) {
+    public Photo(Long photo_id, Long roll_id, Double latitude, Double longitude, Long timestamp, String description, Long lastUpdate, String uniqueId, Integer isDeleted) {
         location = new Location("database");
         if (latitude != null && longitude != null) {
             location.setLatitude(latitude);
@@ -37,6 +41,35 @@ public class Photo {
         this.timestamp = timestamp;
         this.description = description;
         this.lastUpdate = lastUpdate;
+
+        this.uniqueId = uniqueId;
+        this.isDeleted = isDeleted;
+
+    }
+
+
+    public Long getLastAddressUpdateTimestamp() {
+        return lastAddressUpdateTimestamp;
+    }
+
+    public void setLastAddressUpdateTimestamp(Long lastAddressUpdateTimestamp) {
+        this.lastAddressUpdateTimestamp = lastAddressUpdateTimestamp;
+    }
+
+    public String getUniqueId() {
+        return uniqueId;
+    }
+
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
+    }
+
+    public Integer getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Integer deleted) {
+        isDeleted = deleted;
     }
 
     public Photo(Long photo_id, Long roll_id, Location location, Long timestamp, String description) {

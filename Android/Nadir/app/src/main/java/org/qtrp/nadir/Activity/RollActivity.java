@@ -32,6 +32,7 @@ import org.qtrp.nadir.R;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 public class RollActivity extends AppCompatActivity {
@@ -160,12 +161,12 @@ public class RollActivity extends AppCompatActivity {
         reloadAddresses();
     }
 
-    private void dummyData() {
-        adapter.addOne(new Photo(null, roll_id, 2.34534, 2.345345, 12324l, "Stuff", getTimestamp()));
-        adapter.addOne(new Photo(null, roll_id, 2.54644, 2.5677847845, 113346l, "Other stuff", getTimestamp()));
-        adapter.addOne(new Photo(null, roll_id, 2.54644, 2.5677847845, 11314l, "New stuff", getTimestamp()));
-        adapter.notifyDataSetChanged();
-    }
+//    private void dummyData() {
+//        adapter.addOne(new Photo(null, roll_id, 2.34534, 2.345345, 12324l, "Stuff", getTimestamp(), ));
+//        adapter.addOne(new Photo(null, roll_id, 2.54644, 2.5677847845, 113346l, "Other stuff", getTimestamp()));
+//        adapter.addOne(new Photo(null, roll_id, 2.54644, 2.5677847845, 11314l, "New stuff", getTimestamp()));
+//        adapter.notifyDataSetChanged();
+//    }
 
     private void bindWidgets() {
         addPhotoButton = (Button) findViewById(R.id.addPhotoButton);
@@ -202,7 +203,7 @@ public class RollActivity extends AppCompatActivity {
         setTime(getTimeNow());
     }
 
-    private Photo setFields(Long photo_id, Long roll_id){
+    private Photo setFields(Long photo_id, Long roll_id, String uniqueId, Integer isDeleted){
         return new Photo(
                 photo_id,
                 roll_id,
@@ -210,7 +211,9 @@ public class RollActivity extends AppCompatActivity {
                 parseDouble(longituteEt.getText().toString()),
                 timestamp.getTime() / 1000,
                 descriptionEt.getText().toString(),
-                getTimestamp()
+                getTimestamp(),
+                uniqueId,
+                isDeleted
         );
     };
 
@@ -243,7 +246,9 @@ public class RollActivity extends AppCompatActivity {
             public void onClick(View view) {
                 filmRollDbHelper.insertPhoto(setFields(
                         null,
-                        roll_id)
+                        roll_id,
+                        UUID.randomUUID().toString(),
+                        0)
                 );
                 snapMode();
             }
@@ -259,7 +264,7 @@ public class RollActivity extends AppCompatActivity {
         savePhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                editingPhoto = setFields(editingPhoto.getPhotoId(), editingPhoto.getRollId());
+                editingPhoto = setFields(editingPhoto.getPhotoId(), editingPhoto.getRollId(), editingPhoto.getUniqueId(), editingPhoto.getDeleted());
 
 
                 filmRollDbHelper.updatePhoto(editingPhoto);

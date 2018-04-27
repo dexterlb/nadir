@@ -10,6 +10,9 @@
         android:id="@+id/lay"
         layout="@layout/content_manage_rolls" />
 
+    <include
+        layout="@layout/toolbar_actionbar" />
+
     <org.qtrp.nadir.CustomViews.ContextMenuRecyclerView
         android:id="@+id/rollsList"
         android:layout_width="match_parent"

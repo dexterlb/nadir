@@ -18,9 +18,9 @@ public final class FilmRollContract {
 
         public static final String SQL_CREATE = "CREATE TABLE " + Roll.TABLE_NAME + "(" +
                 Roll._ID + " INTEGER PRIMARY KEY, " +
-                Roll.COLUMN_NAME_NAME + " TEXT, " +
+                Roll.COLUMN_NAME_NAME + " TEXT, " +it
                 Roll.COLUMN_NAME_LAST_UPDATE + " INTEGER,  " +
-                Roll.COLUMN_NAME_COLOUR + " TEXT " +
+                Roll.COLUMN_NAME_COLOUR + " TEXT, " +
                 Roll.COLUMN_NAME_UNIQUE_ID + " TEXT " +
                 ")";
 

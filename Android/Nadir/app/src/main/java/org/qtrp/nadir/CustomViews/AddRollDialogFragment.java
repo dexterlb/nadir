@@ -20,6 +20,7 @@ import org.qtrp.nadir.Database.Roll;
 import org.qtrp.nadir.R;
 
 import java.sql.Time;
+import java.util.UUID;
 
 public class AddRollDialogFragment  extends DialogFragment {
     private FilmRollDbHelper filmRollDbHelper;
@@ -74,7 +75,7 @@ public class AddRollDialogFragment  extends DialogFragment {
 
                         Long ctime = System.currentTimeMillis() / 1000;
 
-                        Roll roll = new Roll(null, name, colour, ctime);
+                        Roll roll = new Roll(null, name, colour, ctime, UUID.randomUUID().toString());
                         filmRollDbHelper.insertRoll(roll);
 
                         mListener.onDialogPositiveClick(AddRollDialogFragment.this);

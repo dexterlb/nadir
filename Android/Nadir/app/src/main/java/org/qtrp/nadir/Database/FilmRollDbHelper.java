@@ -44,6 +44,7 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
         values.put(FilmRollContract.Roll.COLUMN_NAME_NAME, roll.name);
         values.put(FilmRollContract.Roll.COLUMN_NAME_LAST_UPDATE, roll.lastUpdate);
         values.put(FilmRollContract.Roll.COLUMN_NAME_COLOUR, roll.colour);
+        values.put(FilmRollContract.Roll.COLUMN_NAME_UNIQUE_ID, roll.uniqueId);
 
         return db.insert(FilmRollContract.Roll.TABLE_NAME, null, values);
     }
@@ -73,7 +74,8 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
                     cursor.getLong(cursor.getColumnIndex(FilmRollContract.Roll._ID)),
                     cursor.getString(cursor.getColumnIndex(FilmRollContract.Roll.COLUMN_NAME_NAME)),
                     cursor.getString(cursor.getColumnIndex(FilmRollContract.Roll.COLUMN_NAME_COLOUR)),
-                    cursor.getLong(cursor.getColumnIndex(FilmRollContract.Roll.COLUMN_NAME_LAST_UPDATE))
+                    cursor.getLong(cursor.getColumnIndex(FilmRollContract.Roll.COLUMN_NAME_LAST_UPDATE)),
+                    cursor.getString(cursor.getColumnIndex(FilmRollContract.Roll.COLUMN_NAME_UNIQUE_ID))
             );
 
             rolls.add(roll);

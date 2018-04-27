@@ -2,6 +2,11 @@ package org.qtrp.nadir.Database;
 
 import android.location.Location;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.qtrp.nadir.Helpers.SyncHelper;
+
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -10,7 +15,7 @@ import java.text.NumberFormat;
  * Created by do on 30/04/17.
  */
 
-public class Photo {
+public class Photo  implements SyncHelper.SyncItem{
     Long photoId;
     Long rollId;
 
@@ -138,6 +143,26 @@ public class Photo {
 
     public Long getLastUpdate(){
      return this.lastUpdate;
+    }
+
+    @Override
+    public String getUniqueID() {
+        return this.uniqueId;
+    }
+
+    @Override
+    public JSONObject jsonify() throws JSONException{
+        JSONObject record = new JSONObject();
+//        Location location;
+//        Long timestamp;
+//        String description;
+//        Integer isDeleted;
+
+        record.put("location", this.location);
+        record.put("timestamp", this.timestamp);
+        record.put("description", this.description);
+        record.put("isDeleted", this.isDeleted);
+        return record;
     }
 
     public void setLastUpdate(Long lastUpdate) {this.lastUpdate = lastUpdate;}

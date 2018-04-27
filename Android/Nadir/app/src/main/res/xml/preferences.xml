@@ -7,4 +7,10 @@
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:title="Filename" />
+
+    <EditTextPreference
+        android:key="te_sync_url"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="Sync URL" />
 </PreferenceScreen>

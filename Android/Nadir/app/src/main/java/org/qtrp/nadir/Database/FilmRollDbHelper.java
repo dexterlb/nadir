@@ -42,7 +42,7 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
 
         ContentValues values = new ContentValues();
         values.put(FilmRollContract.Roll.COLUMN_NAME_NAME, roll.name);
-        values.put(FilmRollContract.Roll.COLUMN_NAME_TIMESTAMP, roll.timestamp);
+        values.put(FilmRollContract.Roll.COLUMN_NAME_LAST_UPDATE, roll.lastUpdate);
         values.put(FilmRollContract.Roll.COLUMN_NAME_COLOUR, roll.colour);
 
         return db.insert(FilmRollContract.Roll.TABLE_NAME, null, values);
@@ -73,7 +73,7 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
                     cursor.getLong(cursor.getColumnIndex(FilmRollContract.Roll._ID)),
                     cursor.getString(cursor.getColumnIndex(FilmRollContract.Roll.COLUMN_NAME_NAME)),
                     cursor.getString(cursor.getColumnIndex(FilmRollContract.Roll.COLUMN_NAME_COLOUR)),
-                    cursor.getLong(cursor.getColumnIndex(FilmRollContract.Roll.COLUMN_NAME_TIMESTAMP))
+                    cursor.getLong(cursor.getColumnIndex(FilmRollContract.Roll.COLUMN_NAME_LAST_UPDATE))
             );
 
             rolls.add(roll);
@@ -154,7 +154,8 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
                     cursor.getDouble(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_LATITUDE)),
                     cursor.getDouble(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_LONGTITUDE)),
                     cursor.getLong(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_TIMESTAMP)),
-                    cursor.getString(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_DESCRIPTION))
+                    cursor.getString(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_DESCRIPTION)),
+                    cursor.getLong(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_LAST_UPDATE))
             );
 
             photos.add(photo);

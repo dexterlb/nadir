@@ -32,6 +32,7 @@ import org.qtrp.nadir.R;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class RollActivity extends AppCompatActivity {
 
@@ -160,9 +161,9 @@ public class RollActivity extends AppCompatActivity {
     }
 
     private void dummyData() {
-        adapter.addOne(new Photo(null, roll_id, 2.34534, 2.345345, 12324l, "Stuff"));
-        adapter.addOne(new Photo(null, roll_id, 2.54644, 2.5677847845, 113346l, "Other stuff"));
-        adapter.addOne(new Photo(null, roll_id, 2.54644, 2.5677847845, 11314l, "New stuff"));
+        adapter.addOne(new Photo(null, roll_id, 2.34534, 2.345345, 12324l, "Stuff", getTimestamp()));
+        adapter.addOne(new Photo(null, roll_id, 2.54644, 2.5677847845, 113346l, "Other stuff", getTimestamp()));
+        adapter.addOne(new Photo(null, roll_id, 2.54644, 2.5677847845, 11314l, "New stuff", getTimestamp()));
         adapter.notifyDataSetChanged();
     }
 
@@ -208,7 +209,8 @@ public class RollActivity extends AppCompatActivity {
                 parseDouble(latitudeEt.getText().toString()),
                 parseDouble(longituteEt.getText().toString()),
                 timestamp.getTime() / 1000,
-                descriptionEt.getText().toString()
+                descriptionEt.getText().toString(),
+                getTimestamp()
         );
     };
 
@@ -296,6 +298,10 @@ public class RollActivity extends AppCompatActivity {
                 editMode(adapter.getItem(position));
             }
         });
+    }
+
+    private Long getTimestamp() {
+        return System.currentTimeMillis() / 1000;
     }
 
     private Date getTimeNow(){

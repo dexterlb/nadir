@@ -2,6 +2,7 @@ package org.qtrp.nadir.Database;
 
 import android.location.Location;
 
+import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
@@ -20,9 +21,11 @@ public class Photo {
     String address;
     Long lastAddressUpdateTimestamp = Long.valueOf(0);
 
+    Long lastUpdate;
+
     public Photo(){};
 
-    public Photo(Long photo_id, Long roll_id, Double latitude, Double longitude, Long timestamp, String description) {
+    public Photo(Long photo_id, Long roll_id, Double latitude, Double longitude, Long timestamp, String description, Long lastUpdate) {
         location = new Location("database");
         if (latitude != null && longitude != null) {
             location.setLatitude(latitude);
@@ -33,6 +36,7 @@ public class Photo {
         this.location = location;
         this.timestamp = timestamp;
         this.description = description;
+        this.lastUpdate = lastUpdate;
     }
 
     public Photo(Long photo_id, Long roll_id, Location location, Long timestamp, String description) {
@@ -99,12 +103,17 @@ public class Photo {
         this.description = description;
     }
 
+    public Long getLastUpdate(){
+     return this.lastUpdate;
+    }
+
+    public void setLastUpdate(Long lastUpdate) {this.lastUpdate = lastUpdate;}
+
     public String getCoordinates() {
         return getCoordinates("#0.00");
     }
 
     public String getCoordinates(String formatPattern) {
-
         NumberFormat formatter = new DecimalFormat(formatPattern);
 
         return

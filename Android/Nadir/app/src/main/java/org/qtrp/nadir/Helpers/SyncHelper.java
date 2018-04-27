@@ -24,7 +24,7 @@ public class SyncHelper {
     public interface SyncItem {
         Long getLastUpdate();
         String getUniqueID();
-        JSONObject jsonify();
+        JSONObject jsonify() throws JSONException;
     }
 
     public SyncHelper(Context context) {

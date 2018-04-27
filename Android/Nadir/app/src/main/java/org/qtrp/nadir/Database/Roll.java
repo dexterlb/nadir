@@ -8,15 +8,15 @@ public class Roll {
     Long id;
     String name;
     String colour;
-    Long timestamp;
+    Long lastUpdate;
 
     public Roll(){}
 
-    public Roll(Long id, String name, String colour, Long timestamp) {
+    public Roll(Long id, String name, String colour, Long lastUpdate) {
         this.id = id;
         this.name = name;
         this.colour = colour;
-        this.timestamp = timestamp;
+        this.lastUpdate = lastUpdate;
     }
 
     @Override
@@ -25,7 +25,7 @@ public class Roll {
                 "id='" + id + '\'' +
                 "name='" + name + '\'' +
                 ", colour='" + colour + '\'' +
-                ", timestamp=" + timestamp +
+                ", timestamp=" + lastUpdate +
                 '}';
     }
 
@@ -53,11 +53,11 @@ public class Roll {
         this.colour = colour;
     }
 
-    public Long getTimestamp() {
-        return timestamp;
+    public Long getLastUpdate() {
+        return this.lastUpdate;
     }
 
-    public void setTimestamp(Long timestamp) {
-        this.timestamp = timestamp;
+    public void setLastUpdate(Long lastUpdate) {
+        this.lastUpdate = lastUpdate;
     }
 }

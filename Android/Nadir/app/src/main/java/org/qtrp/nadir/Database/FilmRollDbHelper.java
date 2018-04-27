@@ -42,7 +42,7 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
 
         ContentValues values = new ContentValues();
         values.put(FilmRollContract.Roll.COLUMN_NAME_NAME, roll.name);
-        values.put(FilmRollContract.Roll.COLUMN_NAME_TIMESTAMP, roll.timestamp);
+        values.put(FilmRollContract.Roll.COLUMN_NAME_LAST_UPDATE, roll.lastUpdate);
         values.put(FilmRollContract.Roll.COLUMN_NAME_COLOUR, roll.colour);
 
         return db.insert(FilmRollContract.Roll.TABLE_NAME, null, values);
@@ -73,7 +73,7 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
                     cursor.getLong(cursor.getColumnIndex(FilmRollContract.Roll._ID)),
                     cursor.getString(cursor.getColumnIndex(FilmRollContract.Roll.COLUMN_NAME_NAME)),
                     cursor.getString(cursor.getColumnIndex(FilmRollContract.Roll.COLUMN_NAME_COLOUR)),
-                    cursor.getLong(cursor.getColumnIndex(FilmRollContract.Roll.COLUMN_NAME_TIMESTAMP))
+                    cursor.getLong(cursor.getColumnIndex(FilmRollContract.Roll.COLUMN_NAME_LAST_UPDATE))
             );
 
             rolls.add(roll);
@@ -95,6 +95,10 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
         values.put(FilmRollContract.Photo.COLUMN_NAME_TIMESTAMP, photo.getTimestamp());
         values.put(FilmRollContract.Photo.COLUMN_NAME_DESCRIPTION, photo.getDescription());
 
+        values.put(FilmRollContract.Photo.COLUMN_NAME_LAST_UPDATE, photo.getLastUpdate());
+        values.put(FilmRollContract.Photo.COLUMN_NAME_UNIQUE_ID, photo.getUniqueId());
+        values.put(FilmRollContract.Photo.COLUMN_NAME_IS_DELETED, photo.getDeleted());
+
         return db.insert(FilmRollContract.Photo.TABLE_NAME, null, values);
     }
 
@@ -115,23 +119,37 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
         values.put(FilmRollContract.Photo.COLUMN_NAME_TIMESTAMP, photo.getTimestamp());
         values.put(FilmRollContract.Photo.COLUMN_NAME_DESCRIPTION, photo.getDescription());
 
+        values.put(FilmRollContract.Photo.COLUMN_NAME_LAST_UPDATE, photo.getLastUpdate());
+        values.put(FilmRollContract.Photo.COLUMN_NAME_UNIQUE_ID, photo.getUniqueId());
+        values.put(FilmRollContract.Photo.COLUMN_NAME_IS_DELETED, photo.getDeleted());
+
         return db.update(FilmRollContract.Photo.TABLE_NAME,values, whereClause, whereArgs);
     }
 
-    public void removePhoto(Long id) {
+    public long removePhoto(Long id) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        db.delete(FilmRollContract.Photo.TABLE_NAME, FilmRollContract.Photo._ID + " = " + id, null);
+
+        ContentValues values = new ContentValues();
+        String whereClause = "_ID = ?";
+        String[] whereArgs = new String[] {
+                String.valueOf(id)
+        };
+
+        values.put(FilmRollContract.Photo.COLUMN_NAME_IS_DELETED, 1);
+
+        return db.update(FilmRollContract.Photo.TABLE_NAME,values, whereClause, whereArgs);
     }
 
     public ArrayList<Photo> getPhotosByRollId(long rollId){
         ArrayList<Photo> photos = new ArrayList<Photo>();
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String whereClause = "rollId = ?";
+        String whereClause = "rollId = ? and isDeleted = ?";
 
         String[] whereArgs = new String[] {
-                String.valueOf(rollId)
+                String.valueOf(rollId),
+                String.valueOf(0)
         };
 
         String orderBy = "timestamp DESC";
@@ -154,7 +172,10 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
                     cursor.getDouble(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_LATITUDE)),
                     cursor.getDouble(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_LONGTITUDE)),
                     cursor.getLong(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_TIMESTAMP)),
-                    cursor.getString(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_DESCRIPTION))
+                    cursor.getString(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_DESCRIPTION)),
+                    cursor.getLong(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_LAST_UPDATE)),
+                    cursor.getString(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_UNIQUE_ID)),
+                    cursor.getInt(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_IS_DELETED))
             );
 
             photos.add(photo);

@@ -23,14 +23,16 @@
   all selects match only not deleted items. when adding a new item, find an
   old deleted item and resurrect it. only add a new one if there's no old one
   available.
+- add an isSynced flag to all items
 
 
 # Sync procedure
 
-- step 1: perform a Get. Update all items whose received last_changed is newer
-  than local. Add any items which are not locally present.
+- step 1: perform a Get using the max last_change of items marked as synced.
+  Update all items whose received last_changed is newer than local. 
+  Add any items which are not locally present.
 - step 2: push all items whose local last_changed is greater than the one
-  received from sync
+  one we used for get.
 
 # Sync api
 
@@ -39,7 +41,8 @@ get an url in the form: https://foo.example.com/bla/bla/#/some_space_key
 * /get:
     request:
         {
-            "spaces": ["space1_key", "space2_key" ...]
+            "spaces": ["space1_key", "space2_key" ...],
+            "last_change": 12345
         }
 
     response:

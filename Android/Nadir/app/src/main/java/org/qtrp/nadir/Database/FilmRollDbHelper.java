@@ -11,6 +11,7 @@ import android.util.Log;
 import org.qtrp.nadir.Helpers.SyncHelper;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class FilmRollDbHelper extends SQLiteOpenHelper{
     public static final int DATABASE_VERSION = 1;
@@ -229,13 +230,82 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
 
     // връща максимален lastUpdate на нещо, което има isSynced
     public Long lastSync() {
-       return null;
+       Long a = lastSyncForPhoto();
+       Long b = lastSyncForRoll();
+
+       if (a > b) {
+           return a;
+       }
+       return b;
+    }
+
+    private Long lastSyncForPhoto() {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String orderBy = "timestamp DESC";
+
+
+        Cursor cursor = db.query(
+                FilmRollContract.Photo.TABLE_NAME,
+                new String[] {
+                        "max(" + FilmRollContract.Photo.COLUMN_NAME_LAST_UPDATE + ")"
+                }, //table columns
+                null, //where clause
+                null, // where  values
+                null,
+                null,
+                orderBy
+        );
+
+        if (cursor.moveToFirst()) {
+            return cursor.getLong(0);
+        }
+
+        return new Long(0);
+    }
+
+    private Long lastSyncForRoll() {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String orderBy = "timestamp DESC";
+
+
+        Cursor cursor = db.query(
+                FilmRollContract.Roll.TABLE_NAME,
+                new String[] {
+                        "max(" + FilmRollContract.Roll.COLUMN_NAME_LAST_UPDATE + ")"
+                }, //table columns
+                null, //where clause
+                null, // where  values
+                null,
+                null,
+                orderBy
+        );
+
+        if (cursor.moveToFirst()) {
+            return cursor.getLong(0);
+        }
+
+        return new Long(0);
     }
 
 
     // връща всички неща, които нямат isSynced и lastUpdate >= since
     public Iterable <SyncHelper.SyncItem> forSync(Long since) {
-        return null;
+        List<SyncHelper.SyncItem> items = new ArrayList<SyncHelper.SyncItem>();
+        
+        photosForSync(items, since);
+        rollsForSync(items, since);
+
+        return items;
+    }
+
+    private void photosForSync(List<SyncHelper.SyncItem> items, Long since) {
+
+    }
+
+    private void rollsForSync(List<SyncHelper.SyncItem> items, Long since) {
+
     }
 
     // ъпдейтва в базата неща и им сетва isSynced (това ще го оставим за друг път, май)

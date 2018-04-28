@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import org.qtrp.nadir.Helpers.SyncHelper;
+
 import java.util.ArrayList;
 
 public class FilmRollDbHelper extends SQLiteOpenHelper{
@@ -187,4 +189,25 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
         return photos;
     }
 
+    // Sync stuff
+
+    // връща максимален lastUpdate на нещо, което има isSynced
+    Long lastSync() {
+       return null;
+    }
+
+    // сетва isSynced на нещата с тези uniqueID-та на true
+    void setSynced(Iterable<String> itemUniqueIDs) {
+
+    }
+
+    // връща всички неща, които нямат isSynced и lastUpdate >= since
+    Iterable <SyncHelper.SyncItem> forSync(Long since) {
+        return null;
+    }
+
+    // ъпдейтва в базата неща (това ще го оставим за друг път, май)
+    void syncUpdate(Iterable<SyncHelper.SyncItem> items) {
+
+    }
 }

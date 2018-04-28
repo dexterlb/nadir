@@ -36,6 +36,10 @@ public class SyncHelper {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String sync_url = prefs.getString("te_sync_url", "");
 
+        if (!sync_url.contains("#")) {
+            return;
+        }
+
         String server_url = sync_url.substring(0, sync_url.indexOf('#'));
         String sync_space = sync_url.substring(sync_url.indexOf('#') + 1);
 

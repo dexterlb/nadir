@@ -345,7 +345,7 @@ public class RollActivity extends AppCompatActivity {
                 continue;
             }
 
-            // filmRollDbHelper.setLastAddressUpdateTimestamp(photo.getPhotoId(), System.currentTimeMillis() / 1000);
+            filmRollDbHelper.setLastAddressUpdateTimestamp(photo.getPhotoId(), System.currentTimeMillis() / 1000);
 
             mGPS.getAddress(photo.getLocation(), new LocationHelper.OnGotAddressListener() {
                 @Override
@@ -353,8 +353,8 @@ public class RollActivity extends AppCompatActivity {
                     if (address == null) {
                         return;
                     }
-                    // filmRollDbHelper.updateAddress(location, address);
-                    // refreshDatasets();
+                    filmRollDbHelper.updateAddress(location, address);
+                    refreshDatasets();
                 };
             });
         }

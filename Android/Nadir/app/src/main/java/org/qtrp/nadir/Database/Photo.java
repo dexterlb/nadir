@@ -1,6 +1,7 @@
 package org.qtrp.nadir.Database;
 
 import android.location.Location;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;

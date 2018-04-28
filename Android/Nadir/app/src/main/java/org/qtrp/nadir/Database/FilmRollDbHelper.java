@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.location.Location;
 
 import org.qtrp.nadir.Helpers.SyncHelper;
 
@@ -103,6 +104,9 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
         values.put(FilmRollContract.Photo.COLUMN_NAME_UNIQUE_ID, photo.getUniqueId());
         values.put(FilmRollContract.Photo.COLUMN_NAME_IS_DELETED, photo.getDeleted());
 
+        values.put(FilmRollContract.Photo.COLUMN_NAME_LAST_ADDRESS_UPDATE, 0);
+        values.put(FilmRollContract.Photo.COLUMN_NAME_ADDRESS, (String)null);
+
         return db.insert(FilmRollContract.Photo.TABLE_NAME, null, values);
     }
 
@@ -126,6 +130,8 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
         values.put(FilmRollContract.Photo.COLUMN_NAME_LAST_UPDATE, photo.getLastUpdate());
         values.put(FilmRollContract.Photo.COLUMN_NAME_UNIQUE_ID, photo.getUniqueId());
         values.put(FilmRollContract.Photo.COLUMN_NAME_IS_DELETED, photo.getDeleted());
+        values.put(FilmRollContract.Photo.COLUMN_NAME_LAST_ADDRESS_UPDATE, 0);
+        values.put(FilmRollContract.Photo.COLUMN_NAME_ADDRESS, (String)null);
 
         return db.update(FilmRollContract.Photo.TABLE_NAME,values, whereClause, whereArgs);
     }
@@ -182,6 +188,9 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
                     cursor.getInt(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_IS_DELETED))
             );
 
+            photo.setLastAddressUpdateTimestamp(cursor.getLong(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_LAST_ADDRESS_UPDATE)));
+            photo.setAddress(cursor.getString(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_ADDRESS)));
+
             photos.add(photo);
         }
 
@@ -211,5 +220,45 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
     // сетва isSynced на нещата с тези uniqueID-та на true
     public void setSynced(Iterable<SyncHelper.SyncItem> itemUniqueIDs) {
 
+    }
+
+    public long setLastAddressUpdateTimestamp(Long photoId, long timestamp) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+
+        ContentValues values = new ContentValues();
+        String whereClause = "_ID = ?";
+        String[] whereArgs = new String[] {
+                String.valueOf(photoId)
+        };
+
+
+        values.put(FilmRollContract.Photo.COLUMN_NAME_LAST_ADDRESS_UPDATE, timestamp);
+
+        return db.update(FilmRollContract.Photo.TABLE_NAME,values, whereClause, whereArgs);
+    }
+
+    public long updateAddress(Location location, String address) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        Double epsilon = new Double(0.000001);
+
+        ContentValues values = new ContentValues();
+        String whereClause =
+                FilmRollContract.Photo.COLUMN_NAME_LATITUDE + " > ? and " +
+                FilmRollContract.Photo.COLUMN_NAME_LATITUDE + " < ? and " +
+                FilmRollContract.Photo.COLUMN_NAME_LONGTITUDE + " > ? and " +
+                FilmRollContract.Photo.COLUMN_NAME_LONGTITUDE + " < ?";
+
+        String[] whereArgs = new String[] {
+                String.valueOf(location.getLatitude() - epsilon),
+                String.valueOf(location.getLatitude() + epsilon),
+                String.valueOf(location.getLongitude() - epsilon),
+                String.valueOf(location.getLongitude() + epsilon)
+        };
+
+        values.put(FilmRollContract.Photo.COLUMN_NAME_ADDRESS, address);
+
+        return db.update(FilmRollContract.Photo.TABLE_NAME,values, whereClause, whereArgs);
     }
 }

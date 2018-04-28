@@ -6,10 +6,13 @@ import android.location.Location;
 import android.util.Log;
 
 import java.util.List;
+import java.util.Timer;
 
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.OnReverseGeocodingListener;
 import io.nlopez.smartlocation.SmartLocation;
+
+import static java.lang.Thread.sleep;
 
 /**
  * Created by do on 04/05/17.
@@ -80,6 +83,10 @@ public class LocationHelper {
 
     public interface OnGotAddressListener {
         void OnGotAddress(Location location, String address);
+    }
+
+    public void getDummyAddress(final Location location, final OnGotAddressListener callback) {
+        callback.OnGotAddress(location, "dummy");
     }
 
     public void getAddress(Location location, final OnGotAddressListener callback) {

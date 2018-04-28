@@ -68,10 +68,16 @@ public class ManageRollsActivity extends AppCompatActivity  implements AddRollDi
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             case R.id.action_sync:
-
+                sync();
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void sync() {
+        Toast.makeText(this, "starting sync", Toast.LENGTH_LONG).show();
+
+
     }
 
     private void setDatasets() {

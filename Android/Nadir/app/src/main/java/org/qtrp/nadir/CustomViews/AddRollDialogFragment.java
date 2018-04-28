@@ -75,7 +75,7 @@ public class AddRollDialogFragment  extends DialogFragment {
 
                         Long ctime = System.currentTimeMillis() / 1000;
 
-                        Roll roll = new Roll(null, name, colour, ctime, UUID.randomUUID().toString());
+                        Roll roll = new Roll(null, name, colour, ctime, UUID.randomUUID().toString(), 0);
                         filmRollDbHelper.insertRoll(roll);
 
                         mListener.onDialogPositiveClick(AddRollDialogFragment.this);

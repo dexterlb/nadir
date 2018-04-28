@@ -15,14 +15,25 @@ public class Roll implements SyncHelper.SyncItem{
     Long lastUpdate;
     String uniqueId;
 
+    public Integer getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Integer isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
+    Integer isDeleted;
+
     public Roll(){}
 
-    public Roll(Long id, String name, String colour, Long lastUpdate, String uniqueId) {
+    public Roll(Long id, String name, String colour, Long lastUpdate, String uniqueId, Integer isDeleted) {
         this.id = id;
         this.name = name;
         this.colour = colour;
         this.lastUpdate = lastUpdate;
         this.uniqueId = uniqueId;
+        this.isDeleted = isDeleted;
     }
 
     @Override

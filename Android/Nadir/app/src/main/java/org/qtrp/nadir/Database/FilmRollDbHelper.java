@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
+import android.util.Log;
 
 import org.qtrp.nadir.Helpers.SyncHelper;
 
@@ -48,6 +49,7 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
         values.put(FilmRollContract.Roll.COLUMN_NAME_LAST_UPDATE, roll.lastUpdate);
         values.put(FilmRollContract.Roll.COLUMN_NAME_COLOUR, roll.colour);
         values.put(FilmRollContract.Roll.COLUMN_NAME_UNIQUE_ID, roll.uniqueId);
+        values.put(FilmRollContract.Roll.COLUMN_NAME_IS_DELETED, roll.isDeleted);
 
         return db.insert(FilmRollContract.Roll.TABLE_NAME, null, values);
     }
@@ -56,17 +58,39 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
     public void removeRoll(Long id) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        db.delete(FilmRollContract.Roll.TABLE_NAME, FilmRollContract.Roll._ID + " = " + id, null);
+
+        ContentValues rollValues = new ContentValues();
+        String rollWhereClause = "_ID = ?";
+        String[] whereArgs = new String[] {
+                String.valueOf(id)
+        };
+
+        rollValues.put(FilmRollContract.Roll.COLUMN_NAME_IS_DELETED, 1);
+
+
+        ContentValues photoValues = new ContentValues();
+        String photoWhereClause = FilmRollContract.Photo.COLUMN_NAME_ROLL_ID + " = ?";
+
+        photoValues.put(FilmRollContract.Photo.COLUMN_NAME_IS_DELETED, 1);
+
+        db.update(FilmRollContract.Photo.TABLE_NAME, photoValues, photoWhereClause, whereArgs);
+        db.update(FilmRollContract.Roll.TABLE_NAME, rollValues, rollWhereClause, whereArgs);
     }
 
     public ArrayList<Roll> getRolls(){
         ArrayList<Roll> rolls = new ArrayList<Roll>();
         SQLiteDatabase db = this.getReadableDatabase();
+        String whereClause = "isDeleted = ?";
+
+        String[] whereArgs = new String[] {
+                String.valueOf(0)
+        };
+
         Cursor cursor = db.query(
           FilmRollContract.Roll.TABLE_NAME,
                 null,
-                null,
-                null,
+                whereClause,
+                whereArgs,
                 null,
                 null,
                 null
@@ -78,7 +102,8 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
                     cursor.getString(cursor.getColumnIndex(FilmRollContract.Roll.COLUMN_NAME_NAME)),
                     cursor.getString(cursor.getColumnIndex(FilmRollContract.Roll.COLUMN_NAME_COLOUR)),
                     cursor.getLong(cursor.getColumnIndex(FilmRollContract.Roll.COLUMN_NAME_LAST_UPDATE)),
-                    cursor.getString(cursor.getColumnIndex(FilmRollContract.Roll.COLUMN_NAME_UNIQUE_ID))
+                    cursor.getString(cursor.getColumnIndex(FilmRollContract.Roll.COLUMN_NAME_UNIQUE_ID)),
+                    cursor.getInt(cursor.getColumnIndex(FilmRollContract.Roll.COLUMN_NAME_IS_DELETED))
             );
 
             rolls.add(roll);
@@ -93,6 +118,8 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
+
+        Log.v("DB", "insert photo with roll id " + photo.getRollId());
 
         values.put(FilmRollContract.Photo.COLUMN_NAME_ROLL_ID, photo.getRollId());
         values.put(FilmRollContract.Photo.COLUMN_NAME_LATITUDE, photo.getLatitude());

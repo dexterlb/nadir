@@ -65,7 +65,10 @@ public class ManageRollsActivity extends AppCompatActivity  implements AddRollDi
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
-                startActivity(new Intent(Settings.ACTION_SETTINGS));
+                startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+            case R.id.action_sync:
+
                 return true;
         }
         return super.onOptionsItemSelected(item);

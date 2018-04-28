@@ -43,7 +43,13 @@ public class SyncHelper {
         }
     }
 
-    public void Push(Iterable<SyncItem> items) throws JSONException {
+    public interface OnSuccessFailListener {
+        void onSuccess();
+        void onFail(String error);
+    }
+
+    public void Get(Long lastUpdate)
+    public void Push(Iterable<SyncItem> items, final OnSuccessFailListener successFailListener) throws JSONException {
         JSONArray records = new JSONArray();
         for (SyncItem item: items) {
             JSONObject record = new JSONObject();
@@ -62,12 +68,23 @@ public class SyncHelper {
             @Override
             public void onResponse(String response) {
                 Log.i("SYNC", "push returned: " + response);
+                if (response == "\"ok\"") {
+                    successFailListener.onSuccess();
+                } else {
+                    successFailListener.onFail("Unable to decode server response: " + response);
+                }
+            }
+
+            @Override
+            public void onFail(String error) {
+                successFailListener.onFail(error);
             }
         });
     }
 
     private interface OnResponseListener {
         void onResponse(String response);
+        void onFail(String error);
     }
 
     private void postRequest(final String body, final OnResponseListener onResponseListener) {
@@ -96,11 +113,14 @@ public class SyncHelper {
 
                     if (conn.getResponseCode() == 200) {
                         onResponseListener.onResponse(conn.getResponseMessage());
+                    } else {
+                        onResponseListener.onFail("HTTP error: " + ((Integer)conn.getResponseCode()).toString());
                     }
 
                     conn.disconnect();
                 } catch (Exception e) {
                     e.printStackTrace();
+                    onResponseListener.onFail("HTTP exception.");
                 }
             }
         });

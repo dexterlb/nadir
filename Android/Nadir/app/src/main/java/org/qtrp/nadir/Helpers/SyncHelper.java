@@ -93,73 +93,83 @@ public class SyncHelper {
         }
     }
 
-    public void Get(Long lastUpdate, final OnGetListener onGetListener) throws JSONException {
-        JSONObject request = new JSONObject();
-        JSONArray spaces = new JSONArray();
-        spaces.put(syncSpace);
-        request.put("spaces", syncSpace);
-        request.put("last_change", lastUpdate);
+    public void Get(Long lastUpdate, final OnGetListener onGetListener) {
+        try {
+            JSONObject request = new JSONObject();
+            JSONArray spaces = new JSONArray();
+            spaces.put(syncSpace);
+            request.put("spaces", syncSpace);
+            request.put("last_change", lastUpdate);
 
-        postRequest(serverUrl + "/get", request.toString(), new OnResponseListener() {
-            @Override
-            public void onResponse(String responseBody) {
-                try {
-                    JSONObject response = new JSONObject(responseBody);
-                    JSONArray records = response.getJSONArray("records");
-                    List<SyncItem> items = new ArrayList<SyncItem>();
-                    for (int i = 0; i < records.length(); i++) {
-                        JSONObject record = records.getJSONObject(i);
-                        RawSyncItem item = new RawSyncItem();
-                        item.setLastUpdate(record.getLong("last_change"));
-                        item.setUniqueID(record.getString("key"));
-                        item.setData(record.getJSONObject("data"));
-                        items.add(item);
+            postRequest(serverUrl + "/get", request.toString(), new OnResponseListener() {
+                @Override
+                public void onResponse(String responseBody) {
+                    try {
+                        JSONObject response = new JSONObject(responseBody);
+                        JSONArray records = response.getJSONArray("records");
+                        List<SyncItem> items = new ArrayList<SyncItem>();
+                        for (int i = 0; i < records.length(); i++) {
+                            JSONObject record = records.getJSONObject(i);
+                            RawSyncItem item = new RawSyncItem();
+                            item.setLastUpdate(record.getLong("last_change"));
+                            item.setUniqueID(record.getString("key"));
+                            item.setData(record.getJSONObject("data"));
+                            items.add(item);
+                        }
+
+                        onGetListener.onGotItems(items);
+                    } catch (JSONException e) {
+                        onGetListener.onFail("Unable to decode server response: " + responseBody);
                     }
-
-                    onGetListener.onGotItems(items);
-                } catch (JSONException e) {
-                    onGetListener.onFail("Unable to decode server response: " + responseBody);
                 }
-            }
 
-            @Override
-            public void onFail(String error) {
-                onGetListener.onFail("HTTP error: " + error);
-            }
-        });
+                @Override
+                public void onFail(String error) {
+                    onGetListener.onFail("HTTP error: " + error);
+                }
+            });
+        } catch(JSONException e) {
+            e.printStackTrace();
+            onGetListener.onFail("Unable to encode request.");
+        }
     }
 
-    public void Push(Iterable<SyncItem> items, final OnSuccessFailListener successFailListener) throws JSONException {
-        JSONArray records = new JSONArray();
-        for (SyncItem item: items) {
-            JSONObject record = new JSONObject();
-            record.put("space", syncSpace);
-            record.put("key", item.getUniqueID());
-            record.put("last_change", item.getLastUpdate());
-            record.put("data", item.jsonify());
+    public void Push(Iterable<SyncItem> items, final OnSuccessFailListener successFailListener) {
+        try {
+            JSONArray records = new JSONArray();
+            for (SyncItem item: items) {
+                JSONObject record = new JSONObject();
+                record.put("space", syncSpace);
+                record.put("key", item.getUniqueID());
+                record.put("last_change", item.getLastUpdate());
+                record.put("data", item.jsonify());
 
-            records.put(record);
-        }
+                records.put(record);
+            }
 
-        JSONObject request = new JSONObject();
-        request.put("records", records);
+            JSONObject request = new JSONObject();
+            request.put("records", records);
 
-        postRequest(serverUrl + "/push", request.toString(), new OnResponseListener() {
-            @Override
-            public void onResponse(String response) {
-                Log.i("SYNC", "push returned: " + response);
-                if (response == "\"ok\"") {
-                    successFailListener.onSuccess();
-                } else {
-                    successFailListener.onFail("Unable to decode server response: " + response);
+            postRequest(serverUrl + "/push", request.toString(), new OnResponseListener() {
+                @Override
+                public void onResponse(String response) {
+                    Log.i("SYNC", "push returned: " + response);
+                    if (response == "\"ok\"") {
+                        successFailListener.onSuccess();
+                    } else {
+                        successFailListener.onFail("Unable to decode server response: " + response);
+                    }
                 }
-            }
 
-            @Override
-            public void onFail(String error) {
-                successFailListener.onFail(error);
-            }
-        });
+                @Override
+                public void onFail(String error) {
+                    successFailListener.onFail(error);
+                }
+            });
+        } catch(JSONException e) {
+            e.printStackTrace();
+            successFailListener.onFail("Unable to encode request.");
+        }
     }
 
     private interface OnResponseListener {

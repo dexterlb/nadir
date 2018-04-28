@@ -192,22 +192,24 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
     // Sync stuff
 
     // връща максимален lastUpdate на нещо, което има isSynced
-    Long lastSync() {
+    public Long lastSync() {
        return null;
     }
 
-    // сетва isSynced на нещата с тези uniqueID-та на true
-    void setSynced(Iterable<String> itemUniqueIDs) {
-
-    }
 
     // връща всички неща, които нямат isSynced и lastUpdate >= since
-    Iterable <SyncHelper.SyncItem> forSync(Long since) {
+    public Iterable <SyncHelper.SyncItem> forSync(Long since) {
         return null;
     }
 
-    // ъпдейтва в базата неща (това ще го оставим за друг път, май)
-    void syncUpdate(Iterable<SyncHelper.SyncItem> items) {
+    // ъпдейтва в базата неща и им сетва isSynced (това ще го оставим за друг път, май)
+    public void syncUpdate(Iterable<SyncHelper.SyncItem> items) {
+        setSynced(items);
+        // ...
+    }
+
+    // сетва isSynced на нещата с тези uniqueID-та на true
+    public void setSynced(Iterable<SyncHelper.SyncItem> itemUniqueIDs) {
 
     }
 }

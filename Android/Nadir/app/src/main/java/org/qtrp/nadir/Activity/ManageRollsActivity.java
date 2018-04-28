@@ -1,6 +1,7 @@
 package org.qtrp.nadir.Activity;
 
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import org.qtrp.nadir.CustomViews.ContextMenuRecyclerView;
 import org.qtrp.nadir.CustomViews.RollAdapter;
 import org.qtrp.nadir.Database.FilmRollDbHelper;
 import org.qtrp.nadir.Database.Roll;
+import org.qtrp.nadir.Helpers.SyncHelper;
 import org.qtrp.nadir.R;
 
 import java.util.ArrayList;
@@ -75,9 +77,36 @@ public class ManageRollsActivity extends AppCompatActivity  implements AddRollDi
     }
 
     private void sync() {
-        Toast.makeText(this, "starting sync", Toast.LENGTH_LONG).show();
+        final Context context = this;
+        Toast.makeText(context, "starting sync", Toast.LENGTH_LONG).show();
 
+        final SyncHelper helper = new SyncHelper(this);
 
+        final Long lastSync = filmRollDbHelper.lastSync();
+        helper.Get(lastSync, new SyncHelper.OnGetListener() {
+            @Override
+            public void onGotItems(Iterable<SyncHelper.SyncItem> items) {
+                filmRollDbHelper.syncUpdate(items);
+                final Iterable<SyncHelper.SyncItem> toSync = filmRollDbHelper.forSync(lastSync);
+                helper.Push(toSync, new SyncHelper.OnSuccessFailListener() {
+                    @Override
+                    public void onSuccess() {
+                        filmRollDbHelper.setSynced(toSync);
+                        Toast.makeText(context, "sync successful", Toast.LENGTH_LONG);
+                    }
+
+                    @Override
+                    public void onFail(String error) {
+                        Toast.makeText(context, "push failed: " + error, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onFail(String error) {
+                Toast.makeText(context, "get failed: " + error, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void setDatasets() {

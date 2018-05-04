@@ -81,17 +81,20 @@ public class ManageRollsActivity extends AppCompatActivity  implements AddRollDi
         Toast.makeText(context, "starting sync", Toast.LENGTH_LONG).show();
 
         final SyncHelper helper = new SyncHelper(this);
+        final SharedPreferences preferences = getPreferences(Context.MODE_PRIVATE);
 
-        final Long lastSync = filmRollDbHelper.lastSync();
+        final Long lastSync = preferences.getLong("lastSync", 0);
         helper.Get(lastSync, new SyncHelper.OnGetListener() {
             @Override
-            public void onGotItems(Iterable<SyncHelper.SyncItem> items) {
-                filmRollDbHelper.syncUpdate(items);
+            public void onGotItems(Iterable<SyncHelper.SyncItem> items, Long newSync) {
                 final Iterable<SyncHelper.SyncItem> toSync = filmRollDbHelper.forSync(lastSync);
                 helper.Push(toSync, new SyncHelper.OnSuccessFailListener() {
                     @Override
                     public void onSuccess() {
-                        filmRollDbHelper.setSynced(toSync);
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.putLong("lastSync", lastSync);
+                        editor.commit();
+
                         Toast.makeText(context, "sync successful", Toast.LENGTH_LONG);
                     }
 

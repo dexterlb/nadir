@@ -55,7 +55,7 @@ public class SyncHelper {
     }
 
     public interface OnGetListener {
-        void onGotItems(Iterable<SyncItem> items);
+        void onGotItems(Iterable<SyncItem> items, Long lastSync);
         void onFail(String error);
     }
 
@@ -120,8 +120,9 @@ public class SyncHelper {
                             item.setData(record.getJSONObject("data"));
                             items.add(item);
                         }
+                        Long lastSync = response.getLong("last_change");
 
-                        onGetListener.onGotItems(items);
+                        onGetListener.onGotItems(items, lastSync);
                     } catch (JSONException e) {
                         onGetListener.onFail("Unable to decode server response: " + responseBody);
                     }

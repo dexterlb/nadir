@@ -10,7 +10,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.qtrp.nadir.Database.FilmRollDbHelper;
 
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -102,8 +106,8 @@ public class SyncHelper {
             JSONObject request = new JSONObject();
             JSONArray spaces = new JSONArray();
             spaces.put(syncSpace);
-            request.put("spaces", syncSpace);
-            request.put("last_change", lastUpdate);
+            request.put("spaces", spaces);
+            request.put("last_sync", lastUpdate);
 
             postRequest(serverUrl + "/get", request.toString(), new OnResponseListener() {
                 @Override
@@ -120,7 +124,7 @@ public class SyncHelper {
                             item.setData(record.getJSONObject("data"));
                             items.add(item);
                         }
-                        Long lastSync = response.getLong("last_change");
+                        Long lastSync = response.getLong("last_sync");
 
                         onGetListener.onGotItems(items, lastSync);
                     } catch (JSONException e) {
@@ -139,7 +143,7 @@ public class SyncHelper {
         }
     }
 
-    public void Push(Iterable<SyncItem> items, final OnSuccessFailListener successFailListener) {
+    public void Push(Iterable<SyncItem> items, Long lastSync, final OnSuccessFailListener successFailListener) {
         try {
             JSONArray records = new JSONArray();
             for (SyncItem item: items) {
@@ -154,12 +158,13 @@ public class SyncHelper {
 
             JSONObject request = new JSONObject();
             request.put("records", records);
+            request.put("last_sync", lastSync);
 
             postRequest(serverUrl + "/push", request.toString(), new OnResponseListener() {
                 @Override
                 public void onResponse(String response) {
                     Log.i("SYNC", "push returned: " + response);
-                    if (response == "\"ok\"") {
+                    if (response != null && response.equals("\"ok\"")) {
                         successFailListener.onSuccess();
                     } else {
                         successFailListener.onFail("Unable to decode server response: " + response);
@@ -206,7 +211,7 @@ public class SyncHelper {
                     Log.i("MSG", conn.getResponseMessage());
 
                     if (conn.getResponseCode() == 200) {
-                        onResponseListener.onResponse(conn.getResponseMessage());
+                        readData(conn.getInputStream(), onResponseListener);
                     } else {
                         onResponseListener.onFail("HTTP error: " + ((Integer)conn.getResponseCode()).toString());
                     }
@@ -218,5 +223,32 @@ public class SyncHelper {
                 }
             }
         });
+
+        thread.start();
+    }
+
+    private void readData(InputStream stream, OnResponseListener onResponseListener) {
+        BufferedReader reader = null;
+        StringBuffer response = new StringBuffer();
+        try {
+            reader = new BufferedReader(new InputStreamReader(stream));
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+        } catch (IOException e) {
+            onResponseListener.onFail("Unable to read HTTP data.");
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    onResponseListener.onFail("Unable to read HTTP data.");
+                    e.printStackTrace();
+                }
+            }
+        }
+        onResponseListener.onResponse(response.toString());
     }
 }

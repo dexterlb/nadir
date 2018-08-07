@@ -16,7 +16,7 @@ import java.text.NumberFormat;
  * Created by do on 30/04/17.
  */
 
-public class Photo  implements SyncHelper.SyncItem{
+public class Photo extends Syncable implements SyncHelper.SyncItem{
     Long photoId;
     Long rollId;
 
@@ -27,15 +27,10 @@ public class Photo  implements SyncHelper.SyncItem{
     String address;
     Long lastAddressUpdateTimestamp = Long.valueOf(0);
 
-    Long lastUpdate;
-    String uniqueId;
-    Integer isDeleted;
-
-
 
     public Photo(){};
 
-    public Photo(Long photo_id, Long roll_id, Double latitude, Double longitude, Long timestamp, String description, Long lastUpdate, String uniqueId, Integer isDeleted) {
+    public Photo(Long photo_id, Long roll_id, Double latitude, Double longitude, Long timestamp, String description, Long lastUpdate, String uniqueId, Integer isDeleted, Integer isSynced) {
         location = new Location("database");
         if (latitude != null && longitude != null) {
             location.setLatitude(latitude);
@@ -47,6 +42,7 @@ public class Photo  implements SyncHelper.SyncItem{
         this.timestamp = timestamp;
         this.description = description;
         this.lastUpdate = lastUpdate;
+        this.isSynced = isSynced;
 
         this.uniqueId = uniqueId;
         this.isDeleted = isDeleted;
@@ -60,22 +56,6 @@ public class Photo  implements SyncHelper.SyncItem{
 
     public void setLastAddressUpdateTimestamp(Long lastAddressUpdateTimestamp) {
         this.lastAddressUpdateTimestamp = lastAddressUpdateTimestamp;
-    }
-
-    public String getUniqueId() {
-        return uniqueId;
-    }
-
-    public void setUniqueId(String uniqueId) {
-        this.uniqueId = uniqueId;
-    }
-
-    public Integer getDeleted() {
-        return isDeleted;
-    }
-
-    public void setDeleted(Integer deleted) {
-        isDeleted = deleted;
     }
 
     public Photo(Long photo_id, Long roll_id, Location location, Long timestamp, String description) {
@@ -140,15 +120,6 @@ public class Photo  implements SyncHelper.SyncItem{
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Long getLastUpdate(){
-     return this.lastUpdate;
-    }
-
-    @Override
-    public String getUniqueID() {
-        return this.uniqueId;
     }
 
     @Override

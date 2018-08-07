@@ -8,32 +8,22 @@ import org.qtrp.nadir.Helpers.SyncHelper;
  * Created by do on 28/04/17.
  */
 
-public class Roll implements SyncHelper.SyncItem{
+public class Roll extends Syncable implements SyncHelper.SyncItem{
     Long id;
     String name;
     String colour;
-    Long lastUpdate;
-    String uniqueId;
-
-    public Integer getIsDeleted() {
-        return isDeleted;
-    }
-
-    public void setIsDeleted(Integer isDeleted) {
-        this.isDeleted = isDeleted;
-    }
-
-    Integer isDeleted;
 
     public Roll(){}
 
-    public Roll(Long id, String name, String colour, Long lastUpdate, String uniqueId, Integer isDeleted) {
+
+    public Roll(Long id, String name, String colour, Long lastUpdate, String uniqueId, Integer isDeleted, Integer isSynced) {
         this.id = id;
         this.name = name;
         this.colour = colour;
         this.lastUpdate = lastUpdate;
         this.uniqueId = uniqueId;
         this.isDeleted = isDeleted;
+        this.isSynced = isSynced;
     }
 
     @Override
@@ -71,18 +61,6 @@ public class Roll implements SyncHelper.SyncItem{
         this.colour = colour;
     }
 
-    public void setUniqueId(String uniqueId) {this.uniqueId = uniqueId;}
-
-    public String getUniqueId() {return this.uniqueId;}
-
-    public Long getLastUpdate() {
-        return this.lastUpdate;
-    }
-
-    @Override
-    public String getUniqueID() {
-        return this.getUniqueId();
-    }
 
     @Override
     public JSONObject jsonify() throws JSONException{
@@ -93,9 +71,5 @@ public class Roll implements SyncHelper.SyncItem{
         record.put("colour", this.colour);
 
         return record;
-    }
-
-    public void setLastUpdate(Long lastUpdate) {
-        this.lastUpdate = lastUpdate;
     }
 }

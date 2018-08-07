@@ -47,14 +47,18 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
 
         ContentValues values = new ContentValues();
         values.put(FilmRollContract.Roll.COLUMN_NAME_NAME, roll.name);
-        values.put(FilmRollContract.Roll.COLUMN_NAME_LAST_UPDATE, roll.lastUpdate);
+        values.put(FilmRollContract.Roll.COLUMN_NAME_LAST_UPDATE, now());
         values.put(FilmRollContract.Roll.COLUMN_NAME_COLOUR, roll.colour);
         values.put(FilmRollContract.Roll.COLUMN_NAME_UNIQUE_ID, roll.uniqueId);
-        values.put(FilmRollContract.Roll.COLUMN_NAME_IS_DELETED, roll.isDeleted);
+        values.put(FilmRollContract.Roll.COLUMN_NAME_IS_DELETED, 0);
+        values.put(FilmRollContract.Roll.COLUMN_NAME_IS_SYNCED, 0);
 
         return db.insert(FilmRollContract.Roll.TABLE_NAME, null, values);
     }
 
+    private Long now() {
+        return System.currentTimeMillis();
+    }
 
     public void removeRoll(Long id) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -67,6 +71,8 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
         };
 
         rollValues.put(FilmRollContract.Roll.COLUMN_NAME_IS_DELETED, 1);
+        rollValues.put(FilmRollContract.Roll.COLUMN_NAME_IS_SYNCED, 0);
+        rollValues.put(FilmRollContract.Roll.COLUMN_NAME_LAST_UPDATE, now());
 
 
         ContentValues photoValues = new ContentValues();
@@ -79,13 +85,19 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
     }
 
     public ArrayList<Roll> getRolls(){
-        ArrayList<Roll> rolls = new ArrayList<Roll>();
-        SQLiteDatabase db = this.getReadableDatabase();
         String whereClause = "isDeleted = ?";
 
         String[] whereArgs = new String[] {
                 String.valueOf(0)
         };
+
+        return getRolls(whereClause, whereArgs);
+    }
+
+    private ArrayList<Roll> getRolls(String whereClause, String[] whereArgs){
+        ArrayList<Roll> rolls = new ArrayList<Roll>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
 
         Cursor cursor = db.query(
           FilmRollContract.Roll.TABLE_NAME,
@@ -104,7 +116,8 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
                     cursor.getString(cursor.getColumnIndex(FilmRollContract.Roll.COLUMN_NAME_COLOUR)),
                     cursor.getLong(cursor.getColumnIndex(FilmRollContract.Roll.COLUMN_NAME_LAST_UPDATE)),
                     cursor.getString(cursor.getColumnIndex(FilmRollContract.Roll.COLUMN_NAME_UNIQUE_ID)),
-                    cursor.getInt(cursor.getColumnIndex(FilmRollContract.Roll.COLUMN_NAME_IS_DELETED))
+                    cursor.getInt(cursor.getColumnIndex(FilmRollContract.Roll.COLUMN_NAME_IS_DELETED)),
+                    cursor.getInt(cursor.getColumnIndex(FilmRollContract.Roll.COLUMN_NAME_IS_SYNCED))
             );
 
             rolls.add(roll);
@@ -128,9 +141,10 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
         values.put(FilmRollContract.Photo.COLUMN_NAME_TIMESTAMP, photo.getTimestamp());
         values.put(FilmRollContract.Photo.COLUMN_NAME_DESCRIPTION, photo.getDescription());
 
-        values.put(FilmRollContract.Photo.COLUMN_NAME_LAST_UPDATE, photo.getLastUpdate());
-        values.put(FilmRollContract.Photo.COLUMN_NAME_UNIQUE_ID, photo.getUniqueId());
-        values.put(FilmRollContract.Photo.COLUMN_NAME_IS_DELETED, photo.getDeleted());
+        values.put(FilmRollContract.Photo.COLUMN_NAME_LAST_UPDATE, now());
+        values.put(FilmRollContract.Photo.COLUMN_NAME_UNIQUE_ID, photo.getUniqueID());
+        values.put(FilmRollContract.Photo.COLUMN_NAME_IS_DELETED, 0);
+        values.put(FilmRollContract.Photo.COLUMN_NAME_IS_SYNCED, 0);
 
         values.put(FilmRollContract.Photo.COLUMN_NAME_LAST_ADDRESS_UPDATE, 0);
         values.put(FilmRollContract.Photo.COLUMN_NAME_ADDRESS, (String)null);
@@ -155,9 +169,10 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
         values.put(FilmRollContract.Photo.COLUMN_NAME_TIMESTAMP, photo.getTimestamp());
         values.put(FilmRollContract.Photo.COLUMN_NAME_DESCRIPTION, photo.getDescription());
 
-        values.put(FilmRollContract.Photo.COLUMN_NAME_LAST_UPDATE, photo.getLastUpdate());
-        values.put(FilmRollContract.Photo.COLUMN_NAME_UNIQUE_ID, photo.getUniqueId());
-        values.put(FilmRollContract.Photo.COLUMN_NAME_IS_DELETED, photo.getDeleted());
+        values.put(FilmRollContract.Photo.COLUMN_NAME_LAST_UPDATE, now());
+        values.put(FilmRollContract.Photo.COLUMN_NAME_UNIQUE_ID, photo.getUniqueID());
+        values.put(FilmRollContract.Photo.COLUMN_NAME_IS_DELETED, 0);
+        values.put(FilmRollContract.Photo.COLUMN_NAME_IS_SYNCED, 0);
         values.put(FilmRollContract.Photo.COLUMN_NAME_LAST_ADDRESS_UPDATE, 0);
         values.put(FilmRollContract.Photo.COLUMN_NAME_ADDRESS, (String)null);
 
@@ -175,20 +190,26 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
         };
 
         values.put(FilmRollContract.Photo.COLUMN_NAME_IS_DELETED, 1);
+        values.put(FilmRollContract.Photo.COLUMN_NAME_IS_SYNCED, 0);
 
         return db.update(FilmRollContract.Photo.TABLE_NAME,values, whereClause, whereArgs);
     }
 
-    public ArrayList<Photo> getPhotosByRollId(long rollId){
-        ArrayList<Photo> photos = new ArrayList<Photo>();
-        SQLiteDatabase db = this.getReadableDatabase();
-
+    public ArrayList<Photo> getPhotosByRollId(long rollId) {
         String whereClause = "rollId = ? and isDeleted = ?";
 
         String[] whereArgs = new String[] {
                 String.valueOf(rollId),
                 String.valueOf(0)
         };
+
+        return getPhotos(whereClause, whereArgs);
+    }
+
+    private ArrayList<Photo> getPhotos(String whereClause, String[] whereArgs){
+        ArrayList<Photo> photos = new ArrayList<Photo>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
 
         String orderBy = "timestamp DESC";
 
@@ -213,7 +234,8 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
                     cursor.getString(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_DESCRIPTION)),
                     cursor.getLong(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_LAST_UPDATE)),
                     cursor.getString(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_UNIQUE_ID)),
-                    cursor.getInt(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_IS_DELETED))
+                    cursor.getInt(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_IS_DELETED)),
+                    cursor.getInt(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_IS_SYNCED))
             );
 
             photo.setLastAddressUpdateTimestamp(cursor.getLong(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_LAST_ADDRESS_UPDATE)));
@@ -228,88 +250,35 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
 
     // Sync stuff
 
-    // връща максимален lastUpdate на нещо, което има isSynced
-    public Long lastSync() {
-       Long a = lastSyncForPhoto();
-       Long b = lastSyncForRoll();
-
-       if (a > b) {
-           return a;
-       }
-       return b;
-    }
-
-    private Long lastSyncForPhoto() {
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        String orderBy = "timestamp DESC";
-
-
-        Cursor cursor = db.query(
-                FilmRollContract.Photo.TABLE_NAME,
-                new String[] {
-                        "max(" + FilmRollContract.Photo.COLUMN_NAME_LAST_UPDATE + ")"
-                }, //table columns
-                null, //where clause
-                null, // where  values
-                null,
-                null,
-                orderBy
-        );
-
-        if (cursor.moveToFirst()) {
-            return cursor.getLong(0);
-        }
-
-        return new Long(0);
-    }
-
-    private Long lastSyncForRoll() {
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        String orderBy = "timestamp DESC";
-
-
-        Cursor cursor = db.query(
-                FilmRollContract.Roll.TABLE_NAME,
-                new String[] {
-                        "max(" + FilmRollContract.Roll.COLUMN_NAME_LAST_UPDATE + ")"
-                }, //table columns
-                null, //where clause
-                null, // where  values
-                null,
-                null,
-                orderBy
-        );
-
-        if (cursor.moveToFirst()) {
-            return cursor.getLong(0);
-        }
-
-        return new Long(0);
-    }
-
-
-    public Iterable <SyncHelper.SyncItem> forSync(Long since) {
+    public Iterable <SyncHelper.SyncItem> forSync() {
         List<SyncHelper.SyncItem> items = new ArrayList<SyncHelper.SyncItem>();
 
-        photosForSync(items, since);
-        rollsForSync(items, since);
+        photosForSync(items);
+        rollsForSync(items);
 
         return items;
     }
 
-    private void photosForSync(List<SyncHelper.SyncItem> items, Long since) {
+    private void photosForSync(List<SyncHelper.SyncItem> items) {
+        String whereClause = "isSynced = ?";
 
+        String[] whereArgs = new String[] {
+                String.valueOf(0)
+        };
+
+        items.addAll(getPhotos(whereClause, whereArgs));
     }
 
-    private void rollsForSync(List<SyncHelper.SyncItem> items, Long since) {
+    private void rollsForSync(List<SyncHelper.SyncItem> items) {
+        String whereClause = "isSynced = ?";
 
+        String[] whereArgs = new String[] {
+                String.valueOf(0)
+        };
+
+        items.addAll(getRolls(whereClause, whereArgs));
     }
 
-    public void syncUpdate(Iterable<SyncHelper.SyncItem> items) {
-        // ...
-    }
 
     public long setLastAddressUpdateTimestamp(Long photoId, long timestamp) {
         SQLiteDatabase db = this.getWritableDatabase();

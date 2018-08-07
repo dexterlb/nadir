@@ -213,7 +213,8 @@ public class RollActivity extends AppCompatActivity {
                 descriptionEt.getText().toString(),
                 getTimestamp(),
                 uniqueId,
-                isDeleted
+                isDeleted,
+                0
         );
     };
 
@@ -264,7 +265,7 @@ public class RollActivity extends AppCompatActivity {
         savePhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                editingPhoto = setFields(editingPhoto.getPhotoId(), editingPhoto.getRollId(), editingPhoto.getUniqueId(), editingPhoto.getDeleted());
+                editingPhoto = setFields(editingPhoto.getPhotoId(), editingPhoto.getRollId(), editingPhoto.getUniqueID(), editingPhoto.getDeleted());
 
 
                 filmRollDbHelper.updatePhoto(editingPhoto);

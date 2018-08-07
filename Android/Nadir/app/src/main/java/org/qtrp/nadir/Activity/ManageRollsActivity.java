@@ -78,7 +78,7 @@ public class ManageRollsActivity extends AppCompatActivity  implements AddRollDi
 
     private void sync() {
         final Context context = this;
-        Toast.makeText(context, "starting sync", Toast.LENGTH_LONG).show();
+        showToast("starting sync");
 
         final SyncHelper helper = new SyncHelper(this);
         final SharedPreferences preferences = getPreferences(Context.MODE_PRIVATE);
@@ -86,28 +86,38 @@ public class ManageRollsActivity extends AppCompatActivity  implements AddRollDi
         final Long lastSync = preferences.getLong("lastSync", 0);
         helper.Get(lastSync, new SyncHelper.OnGetListener() {
             @Override
-            public void onGotItems(Iterable<SyncHelper.SyncItem> items, Long newSync) {
-                final Iterable<SyncHelper.SyncItem> toSync = filmRollDbHelper.forSync(lastSync);
-                helper.Push(toSync, new SyncHelper.OnSuccessFailListener() {
+            public void onGotItems(Iterable<SyncHelper.SyncItem> items, final Long newSync) {
+                final Iterable<SyncHelper.SyncItem> toSync = filmRollDbHelper.forSync();
+                helper.Push(toSync, newSync, new SyncHelper.OnSuccessFailListener() {
                     @Override
                     public void onSuccess() {
                         SharedPreferences.Editor editor = preferences.edit();
-                        editor.putLong("lastSync", lastSync);
+                        editor.putLong("lastSync", newSync);
                         editor.commit();
 
-                        Toast.makeText(context, "sync successful", Toast.LENGTH_LONG);
+                        showToast("sync successful");
                     }
 
                     @Override
                     public void onFail(String error) {
-                        Toast.makeText(context, "push failed: " + error, Toast.LENGTH_LONG).show();
+                        showToast("push failed: " + error);
                     }
                 });
             }
 
             @Override
             public void onFail(String error) {
-                Toast.makeText(context, "get failed: " + error, Toast.LENGTH_LONG).show();
+                showToast("get failed: " + error);
+            }
+        });
+    }
+
+    private void showToast(final String text) {
+        final Context context = this;
+
+        runOnUiThread(new Runnable() {
+            public void run() {
+                Toast.makeText(context, text, Toast.LENGTH_LONG).show();
             }
         });
     }

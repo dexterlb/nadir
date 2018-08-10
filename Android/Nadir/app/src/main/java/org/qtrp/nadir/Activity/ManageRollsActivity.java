@@ -23,11 +23,15 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.qtrp.nadir.CustomViews.AddRollDialogFragment;
 import org.qtrp.nadir.CustomViews.ContextMenuRecyclerView;
 import org.qtrp.nadir.CustomViews.RollAdapter;
 import org.qtrp.nadir.Database.FilmRollDbHelper;
+import org.qtrp.nadir.Database.Photo;
 import org.qtrp.nadir.Database.Roll;
+import org.qtrp.nadir.Database.Syncable;
 import org.qtrp.nadir.Helpers.SyncHelper;
 import org.qtrp.nadir.R;
 
@@ -72,6 +76,10 @@ public class ManageRollsActivity extends AppCompatActivity  implements AddRollDi
             case R.id.action_sync:
                 sync();
                 return true;
+            case R.id.action_resync:
+                clearLastSync();
+                sync();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -86,7 +94,7 @@ public class ManageRollsActivity extends AppCompatActivity  implements AddRollDi
         final Long lastSync = preferences.getLong("lastSync", 0);
         helper.Get(lastSync, new SyncHelper.OnGetListener() {
             @Override
-            public void onGotItems(Iterable<SyncHelper.SyncItem> items, final Long newSync) {
+            public void onGotItems(final Iterable<SyncHelper.SyncItem> items, final Long newSync) {
                 final Iterable<SyncHelper.SyncItem> toSync = filmRollDbHelper.forSync();
                 helper.Push(toSync, newSync, new SyncHelper.OnSuccessFailListener() {
                     @Override
@@ -95,7 +103,13 @@ public class ManageRollsActivity extends AppCompatActivity  implements AddRollDi
                         editor.putLong("lastSync", newSync);
                         editor.commit();
 
-                        showToast("sync successful");
+                        try {
+                            updateSyncedItems(items);
+                            showToast("sync successful");
+                        } catch(JSONException e) {
+                            e.printStackTrace();
+                            showToast("decoding items failed.");
+                        }
                     }
 
                     @Override
@@ -110,6 +124,42 @@ public class ManageRollsActivity extends AppCompatActivity  implements AddRollDi
                 showToast("get failed: " + error);
             }
         });
+    }
+
+    private void updateSyncedItems(Iterable<SyncHelper.SyncItem> items) throws JSONException {
+        for (SyncHelper.SyncItem item : items) {
+            JSONObject record = item.jsonify();
+            if (record.getString("_type_").equals("roll")) {
+                Roll roll = new Roll(record);
+                updateSyncFields(item, roll);
+                filmRollDbHelper.updateNewerRoll(roll);
+            }
+        }
+
+        for (SyncHelper.SyncItem item : items) {
+            JSONObject record = item.jsonify();
+            if (record.getString("_type_").equals("photo")) {
+                Photo photo = new Photo(record, filmRollDbHelper);
+                updateSyncFields(item, photo);
+                filmRollDbHelper.updateNewerPhoto(photo);
+            }
+        }
+
+        refreshDatasets();
+    }
+
+    private void updateSyncFields(SyncHelper.SyncItem item, Syncable obj) {
+        obj.setLastUpdate(item.getLastUpdate());
+        obj.setUniqueId(item.getUniqueID());
+        obj.setSynced(1);
+    }
+
+    private void clearLastSync() {
+        final SyncHelper helper = new SyncHelper(this);
+        final SharedPreferences preferences = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putLong("lastSync", 0);
+        editor.commit();
     }
 
     private void showToast(final String text) {
@@ -135,9 +185,14 @@ public class ManageRollsActivity extends AppCompatActivity  implements AddRollDi
     }
 
     private void refreshDatasets() {
-        adapter.clear();
-        adapter.addAll(filmRollDbHelper.getRolls());
-        adapter.notifyDataSetChanged();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                adapter.clear();
+                adapter.addAll(filmRollDbHelper.getRolls());
+                adapter.notifyDataSetChanged();
+            }
+        });
     }
 
     private void bindWidgets() {

@@ -42,6 +42,63 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
         onCreate(sqLiteDatabase);
     }
 
+    public Photo getPhotoById(Long id) {
+        String whereClause = "_ID = ?";
+
+        String[] whereArgs = new String[] {
+                String.valueOf(id)
+        };
+
+        try {
+            return getPhotos(whereClause, whereArgs).get(0);
+        } catch(IndexOutOfBoundsException e) {
+            return null;
+        }
+    }
+
+    public Photo getPhotoByUniqueId(String uniqueId) {
+        String whereClause = FilmRollContract.Photo.COLUMN_NAME_UNIQUE_ID + " = ?";
+
+        String[] whereArgs = new String[] {
+                uniqueId
+        };
+
+        try {
+            return getPhotos(whereClause, whereArgs).get(0);
+        } catch(IndexOutOfBoundsException e) {
+            return null;
+        }
+    }
+
+
+    public Roll getRollById(Long id) {
+        String whereClause = "_ID = ?";
+
+        String[] whereArgs = new String[] {
+                String.valueOf(id)
+        };
+        try {
+            return getRolls(whereClause, whereArgs).get(0);
+        } catch(IndexOutOfBoundsException e) {
+            return null;
+        }
+    }
+
+    public Roll getRollByUniqueId(String uniqueId) {
+        String whereClause = FilmRollContract.Roll.COLUMN_NAME_UNIQUE_ID + " = ?";
+
+        String[] whereArgs = new String[] {
+                uniqueId
+        };
+
+        try {
+            return getRolls(whereClause, whereArgs).get(0);
+        } catch(IndexOutOfBoundsException e) {
+            return null;
+        }
+    }
+
+
     public long insertRoll(Roll roll) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -152,6 +209,58 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
         return db.insert(FilmRollContract.Photo.TABLE_NAME, null, values);
     }
 
+    public long updateNewerPhoto(Photo newPhoto) {
+        Photo photo = getPhotoByUniqueId(newPhoto.uniqueId);
+
+        if (photo == null) {
+            return insertPhoto(newPhoto);
+        }
+
+        if (newPhoto.lastUpdate >= photo.lastUpdate) {
+            return updatePhoto(newPhoto);
+        }
+
+        return 0;
+    }
+
+    public long updateNewerRoll(Roll newRoll) {
+        Roll roll = getRollByUniqueId(newRoll.uniqueId);
+
+        if (roll == null) {
+            return insertRoll(newRoll);
+        }
+
+        if (newRoll.lastUpdate >= roll.lastUpdate) {
+            return updateRoll(newRoll);
+        }
+
+        return 0;
+    }
+
+
+    public long updateRoll(Roll roll) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+
+        ContentValues values = new ContentValues();
+        String whereClause = "_ID = ?";
+        String[] whereArgs = new String[] {
+                String.valueOf(roll.getId())
+        };
+
+
+        values.put(FilmRollContract.Roll.COLUMN_NAME_NAME, roll.getId());
+        values.put(FilmRollContract.Roll.COLUMN_NAME_COLOUR, roll.getColour());
+
+        values.put(FilmRollContract.Roll.COLUMN_NAME_LAST_UPDATE, now());
+        values.put(FilmRollContract.Roll.COLUMN_NAME_UNIQUE_ID, roll.getUniqueID());
+        values.put(FilmRollContract.Roll.COLUMN_NAME_IS_DELETED, roll.isDeleted);
+        values.put(FilmRollContract.Roll.COLUMN_NAME_IS_SYNCED, roll.isSynced);
+
+        return db.update(FilmRollContract.Roll.TABLE_NAME,values, whereClause, whereArgs);
+    }
+
+
     public long updatePhoto(Photo photo) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -171,15 +280,15 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
 
         values.put(FilmRollContract.Photo.COLUMN_NAME_LAST_UPDATE, now());
         values.put(FilmRollContract.Photo.COLUMN_NAME_UNIQUE_ID, photo.getUniqueID());
-        values.put(FilmRollContract.Photo.COLUMN_NAME_IS_DELETED, 0);
-        values.put(FilmRollContract.Photo.COLUMN_NAME_IS_SYNCED, 0);
+        values.put(FilmRollContract.Photo.COLUMN_NAME_IS_DELETED, photo.getDeleted());
+        values.put(FilmRollContract.Photo.COLUMN_NAME_IS_SYNCED, photo.getSynced());
         values.put(FilmRollContract.Photo.COLUMN_NAME_LAST_ADDRESS_UPDATE, 0);
         values.put(FilmRollContract.Photo.COLUMN_NAME_ADDRESS, (String)null);
 
         return db.update(FilmRollContract.Photo.TABLE_NAME,values, whereClause, whereArgs);
     }
 
-    public long removePhoto(Long id) {
+    public long removePhoto(Long id, Long time) {
         SQLiteDatabase db = this.getWritableDatabase();
 
 
@@ -191,6 +300,7 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
 
         values.put(FilmRollContract.Photo.COLUMN_NAME_IS_DELETED, 1);
         values.put(FilmRollContract.Photo.COLUMN_NAME_IS_SYNCED, 0);
+        values.put(FilmRollContract.Photo.COLUMN_NAME_LAST_UPDATE, time);
 
         return db.update(FilmRollContract.Photo.TABLE_NAME,values, whereClause, whereArgs);
     }
@@ -235,7 +345,8 @@ public class FilmRollDbHelper extends SQLiteOpenHelper{
                     cursor.getLong(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_LAST_UPDATE)),
                     cursor.getString(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_UNIQUE_ID)),
                     cursor.getInt(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_IS_DELETED)),
-                    cursor.getInt(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_IS_SYNCED))
+                    cursor.getInt(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_IS_SYNCED)),
+                    this
             );
 
             photo.setLastAddressUpdateTimestamp(cursor.getLong(cursor.getColumnIndex(FilmRollContract.Photo.COLUMN_NAME_LAST_ADDRESS_UPDATE)));

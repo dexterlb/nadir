@@ -1,14 +1,11 @@
 package org.qtrp.nadir.Database;
 
 import android.location.Location;
-import android.util.Log;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.qtrp.nadir.Helpers.SyncHelper;
 
-import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
@@ -27,10 +24,9 @@ public class Photo extends Syncable implements SyncHelper.SyncItem{
     String address;
     Long lastAddressUpdateTimestamp = Long.valueOf(0);
 
+    FilmRollDbHelper db;
 
-    public Photo(){};
-
-    public Photo(Long photo_id, Long roll_id, Double latitude, Double longitude, Long timestamp, String description, Long lastUpdate, String uniqueId, Integer isDeleted, Integer isSynced) {
+    public Photo(Long photo_id, Long roll_id, Double latitude, Double longitude, Long timestamp, String description, Long lastUpdate, String uniqueId, Integer isDeleted, Integer isSynced, FilmRollDbHelper db) {
         location = new Location("database");
         if (latitude != null && longitude != null) {
             location.setLatitude(latitude);
@@ -47,6 +43,7 @@ public class Photo extends Syncable implements SyncHelper.SyncItem{
         this.uniqueId = uniqueId;
         this.isDeleted = isDeleted;
 
+        this.db = db;
     }
 
 
@@ -58,12 +55,14 @@ public class Photo extends Syncable implements SyncHelper.SyncItem{
         this.lastAddressUpdateTimestamp = lastAddressUpdateTimestamp;
     }
 
-    public Photo(Long photo_id, Long roll_id, Location location, Long timestamp, String description) {
+    public Photo(Long photo_id, Long roll_id, Location location, Long timestamp, String description, FilmRollDbHelper db) {
         this.photoId = photo_id;
         this.rollId = roll_id;
         this.location = location;
         this.timestamp = timestamp;
         this.description = description;
+
+        this.db = db;
     }
 
     public Long getPhotoId() {
@@ -130,12 +129,27 @@ public class Photo extends Syncable implements SyncHelper.SyncItem{
 //        String description;
 //        Integer isDeleted;
 
-        record.put("location", this.location);
+        record.put("latitude", this.getLatitude());
+        record.put("longitude", this.getLongitude());
         record.put("timestamp", this.timestamp);
         record.put("description", this.description);
         record.put("isDeleted", this.isDeleted);
+        record.put("roll", db.getRollById(this.getRollId()).getUniqueID());
+        record.put("_type_", "photo");
         return record;
     }
+
+    public Photo(JSONObject record, FilmRollDbHelper db) throws JSONException {
+        this.db = db;
+        this.location = new Location("database");
+        this.setLatitude(record.getDouble("latitude"));
+        this.setLongitude(record.getDouble("longitude"));
+        this.setTimestamp(record.getLong("longitude"));
+        this.setDescription(record.getString("description"));
+        this.setDeleted(record.getInt("isDeleted"));
+        this.setRollId(db.getRollByUniqueId(record.getString("roll")).getId());
+    }
+
 
     public void setLastUpdate(Long lastUpdate) {this.lastUpdate = lastUpdate;}
 

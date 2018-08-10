@@ -8,6 +8,11 @@
             android:icon="@drawable/ic_sync_black_24dp"
             android:title="Sync"
             app:showAsAction="ifRoom"/>
+        <item
+            android:id="@+id/action_resync"
+            android:icon="@drawable/common_google_signin_btn_icon_light"
+            android:title="Sync everything"
+            app:showAsAction="ifRoom"/>
 
         <!-- Settings, should always be in the overflow -->
         <item android:id="@+id/action_settings"

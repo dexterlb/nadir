@@ -211,10 +211,11 @@ public class RollActivity extends AppCompatActivity {
                 parseDouble(longituteEt.getText().toString()),
                 timestamp.getTime() / 1000,
                 descriptionEt.getText().toString(),
-                getTimestamp(),
+                System.currentTimeMillis(),
                 uniqueId,
                 isDeleted,
-                0
+                0,
+                filmRollDbHelper
         );
     };
 
@@ -277,7 +278,7 @@ public class RollActivity extends AppCompatActivity {
         deletePhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                filmRollDbHelper.removePhoto(editingPhoto.getPhotoId());
+                filmRollDbHelper.removePhoto(editingPhoto.getPhotoId(), System.currentTimeMillis());
                 snapMode();
                 refreshDatasets();
             }

@@ -69,7 +69,13 @@ public class Roll extends Syncable implements SyncHelper.SyncItem{
         JSONObject record = new JSONObject();
         record.put("name", this.name);
         record.put("colour", this.colour);
+        record.put("_type_", "roll");
 
         return record;
+    }
+
+    public Roll(JSONObject record) throws JSONException {
+        this.setColour(record.getString("colour"));
+        this.setName(record.getString("name"));
     }
 }

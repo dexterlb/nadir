@@ -3,6 +3,7 @@ const   HtmlWebpackPlugin             = require('html-webpack-plugin');
 const   HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
 const   WebpackShellPluginNext        = require('webpack-shell-plugin-next');
 const   fs                            = require('fs');
+const   sveltePreprocess              = require('svelte-preprocess');
 
 
 function base64_encode(file) {
@@ -119,7 +120,13 @@ function build_config(mode) {
         rules: [
           {
             test: /\.(svelte)$/,
-            use: 'svelte-loader'
+            use: {
+              loader: 'svelte-loader',
+              options: {
+                preprocess: sveltePreprocess({
+                })
+              },
+            },
           },
           {
             // see svelte-loader docs for explanation

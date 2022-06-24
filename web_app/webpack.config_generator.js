@@ -68,6 +68,15 @@ function build_config(mode) {
         ]
       },
 
+      resolve: {
+        // see svelte loader docs for explanation
+        alias: {
+          svelte: path.resolve('node_modules', 'svelte')
+        },
+        extensions: ['.mjs', '.js', '.svelte'],
+        mainFields: ['svelte', 'browser', 'module', 'main']
+      },
+
       output: {
         path: path.resolve(__dirname + '/dist'),
         publicPath: '',
@@ -109,6 +118,17 @@ function build_config(mode) {
       module: {
         rules: [
           {
+            test: /\.(svelte)$/,
+            use: 'svelte-loader'
+          },
+          {
+            // see svelte-loader docs for explanation
+            test: /node_modules\/svelte\/.*\.mjs$/,
+            resolve: {
+              fullySpecified: false
+            }
+          },
+          {
             test: /\.(scss)$/,
             use: sass_loader_chain,
           },
@@ -120,12 +140,6 @@ function build_config(mode) {
             test: /\.tsx?$/,
             use: 'ts-loader',
             exclude: excludes,
-          },
-          {
-            test:    /\.elm$/,
-            exclude: excludes,
-            loader:  'elm-webpack-loader',
-            options: elm_loader_options,
           },
           {
             test: /\.(woff|woff2|png|ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,

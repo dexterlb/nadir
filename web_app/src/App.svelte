@@ -1,11 +1,26 @@
 <script lang="ts">
-    let name: string = 'qux';
+    import RollsView from './Rolls.svelte'
+    import SettingsView from './Settings.svelte'
+
+    var view = RollsView
+
+    function go_rolls() {
+        view = RollsView
+    }
+
+    function go_settings() {
+        view = SettingsView
+    }
 </script>
 
-<style lang="scss">
-    h1 {
-        color: cyan;
-    }
-</style>
+<nav class="top-menu">
+    <ul>
+        <li><button on:click={go_rolls}>Rolls</button></li>
+        <li><button on:click={go_settings}>Settings</button></li>
+    </ul>
+</nav>
 
-<h1>Hello {name}!</h1>
+<svelte:component this={view}></svelte:component>
+
+<style lang="scss">
+</style>

@@ -1,10 +1,10 @@
 <script lang="ts">
-    let name: string = 'baba';
+    let name: string = 'qux';
 </script>
 
-<style>
-    h1{
-        color: tomato
+<style lang="scss">
+    h1 {
+        color: cyan;
     }
 </style>
 

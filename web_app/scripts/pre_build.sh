@@ -6,3 +6,5 @@ cdir="$(dirname "$(readlink -f "${0}")")"
 cd "${cdir}"/..
 
 rm -rvf dist
+
+svelte-check

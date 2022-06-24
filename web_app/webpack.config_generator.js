@@ -74,7 +74,7 @@ function build_config(mode) {
         alias: {
           svelte: path.resolve('node_modules', 'svelte')
         },
-        extensions: ['.mjs', '.js', '.svelte'],
+        extensions: ['.mjs', '.js', '.svelte', '.ts'],
         mainFields: ['svelte', 'browser', 'module', 'main']
       },
 
